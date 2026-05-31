@@ -10,6 +10,7 @@ import type {
   SchoolUnit,
   StudentTransactionData,
   TxnBulananMonth,
+  Transaction,
 } from '@/types/master'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -67,6 +68,9 @@ export default function TransaksiBaruPage() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [tab, setTab] = useState<'bayar' | 'riwayat'>('bayar')
+  const [riwayat, setRiwayat] = useState<Transaction[]>([])
+  const [loadingRiwayat, setLoadingRiwayat] = useState(false)
 
   const [schoolYears, setSchoolYears] = useState<SchoolYear[]>([])
   const [units, setUnits] = useState<SchoolUnit[]>([])
@@ -148,6 +152,7 @@ export default function TransaksiBaruPage() {
     setSelectedStudent(student)
     setCartItems([])
     setError(null)
+    setTab('bayar')
     try {
       setLoadingTxn(true)
       const res = await apiClient.get<StudentTransactionData>(`/billing/bills/student-transaction/${student.id}`)
@@ -155,6 +160,20 @@ export default function TransaksiBaruPage() {
     } catch { setError('Gagal memuat data transaksi.') }
     finally { setLoadingTxn(false) }
   }
+
+  const fetchRiwayat = async () => {
+    if (!selectedStudent) return
+    try {
+      setLoadingRiwayat(true)
+      const res = await apiClient.get<Transaction[]>('/transactions', { params: { studentId: selectedStudent.id } })
+      setRiwayat(res.data)
+    } catch { setError('Gagal memuat riwayat.') }
+    finally { setLoadingRiwayat(false) }
+  }
+
+  useEffect(() => {
+    if (tab === 'riwayat') fetchRiwayat()
+  }, [tab])
 
   const resetAll = () => {
     setStep('search')
@@ -166,6 +185,8 @@ export default function TransaksiBaruPage() {
     setError(null)
     setResult(null)
     setNotes('')
+    setRiwayat([])
+    setTab('bayar')
     setShowSearchDialog(true)
   }
 
@@ -333,6 +354,27 @@ export default function TransaksiBaruPage() {
                 </div>
               </div>
 
+              {/* Tabs */}
+              <div className="flex border-b border-gray-200">
+                <button
+                  onClick={() => setTab('bayar')}
+                  className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                    tab === 'bayar' ? 'border-accent text-accent' : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Pembayaran
+                </button>
+                <button
+                  onClick={() => setTab('riwayat')}
+                  className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
+                    tab === 'riwayat' ? 'border-accent text-accent' : 'border-transparent text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  Riwayat Transaksi
+                </button>
+              </div>
+
+              {tab === 'bayar' && (<>
               {/* Bebas Bills Table */}
               {txnData.bebas.length > 0 && (
                 <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
@@ -517,6 +559,51 @@ export default function TransaksiBaruPage() {
                       {saving ? 'Menyimpan...' : `Konfirmasi — ${formatRupiah(cartTotal)}`}
                     </Button>
                   </div>
+                </div>
+              )}
+
+              </>)}
+              {tab === 'riwayat' && (
+                <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div className="px-4 py-3 bg-gray-50 border-b">
+                    <span className="font-medium text-gray-700 text-sm">Riwayat Transaksi</span>
+                  </div>
+                  {loadingRiwayat ? (
+                    <div className="p-4 space-y-3">
+                      {[0, 1, 2].map(i => (<div key={i} className="h-4 bg-gray-200 rounded animate-pulse w-full" />))}
+                    </div>
+                  ) : riwayat.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-gray-100">
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. Transaksi</th>
+                            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Nominal</th>
+                            <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {riwayat.map(tx => (
+                            <tr key={tx.id} className="border-b border-gray-50">
+                              <td className="px-4 py-3 font-mono tabular-nums text-gray-700">{tx.transactionNumber}</td>
+                              <td className="px-4 py-3 text-right font-semibold text-accent tabular-nums">{formatRupiah(tx.totalAmount)}</td>
+                              <td className="px-4 py-3 text-center">
+                                <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${
+                                  tx.status === 'aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                }`}>
+                                  {tx.status === 'aktif' ? 'Aktif' : 'Void'}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-gray-500">{new Date(tx.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-400 text-center py-8">Belum ada riwayat transaksi</p>
+                  )}
                 </div>
               )}
             </>
