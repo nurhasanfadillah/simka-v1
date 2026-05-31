@@ -109,6 +109,28 @@ export class ReportsController {
     );
   }
 
+  @Get('tahunan/export/pdf')
+  @RequirePermissions('report.view')
+  async exportTahunanPdf(
+    @Res() res: Response,
+    @Query('schoolYearId', ParseIntPipe) schoolYearId: number,
+  ) {
+    const buffer = await this.pdfReportsService.generateTahunan(schoolYearId);
+    this.setPdfHeaders(res, `laporan-tahunan-${schoolYearId}.pdf`);
+    res.end(buffer);
+  }
+
+  @Get('tahunan/export/excel')
+  @RequirePermissions('report.view')
+  async exportTahunanExcel(
+    @Res() res: Response,
+    @Query('schoolYearId', ParseIntPipe) schoolYearId: number,
+  ) {
+    const buffer = await this.excelService.exportTahunan(schoolYearId);
+    this.setExcelHeaders(res, `laporan-tahunan-${schoolYearId}.xlsx`);
+    res.end(buffer);
+  }
+
   @Get('tahunan')
   @RequirePermissions('report.view')
   getLaporanTahunan(@Query('schoolYearId', ParseIntPipe) schoolYearId: number) {

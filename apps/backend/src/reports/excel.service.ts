@@ -2,6 +2,11 @@ import { Injectable } from '@nestjs/common';
 import * as ExcelJS from 'exceljs';
 import { ReportsService } from './reports.service';
 
+const BULAN_NAMA = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+];
+
 @Injectable()
 export class ExcelService {
   constructor(private readonly reportsService: ReportsService) {}
@@ -167,6 +172,40 @@ export class ExcelService {
         jumlahTransaksi: pos.jumlahTransaksi,
         jumlahSiswa: pos.jumlahSiswa,
       });
+    });
+
+    sheet.getColumn('totalPenerimaan').numFmt = '#,##0';
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    return Buffer.from(buffer);
+  }
+
+  async exportTahunan(schoolYearId: number): Promise<Buffer> {
+    const result = await this.reportsService.getLaporanTahunan(schoolYearId);
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Laporan Tahunan');
+
+    sheet.columns = [
+      { header: 'Bulan', key: 'bulan', width: 20 },
+      { header: 'Total Penerimaan', key: 'totalPenerimaan', width: 20 },
+      { header: 'Jumlah Transaksi', key: 'jumlahTransaksi', width: 18 },
+    ];
+
+    this.styleHeaderRow(sheet.getRow(1));
+
+    result.perBulan.forEach((row) => {
+      sheet.addRow({
+        bulan: `${BULAN_NAMA[row.month - 1] ?? row.month} ${row.year}`,
+        totalPenerimaan: row.totalPenerimaan,
+        jumlahTransaksi: row.jumlahTransaksi,
+      });
+    });
+
+    sheet.addRow({
+      bulan: 'TOTAL',
+      totalPenerimaan: result.totalPenerimaan,
+      jumlahTransaksi: result.jumlahTransaksi,
     });
 
     sheet.getColumn('totalPenerimaan').numFmt = '#,##0';

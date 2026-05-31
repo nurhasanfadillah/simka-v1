@@ -208,4 +208,34 @@ export class PdfReportsService {
     const html = this.wrapHtml('Rekap POS Pembayaran', 'Semua POS', body);
     return this.pdfService.generateFromHtml(html, { format: 'A4' });
   }
+
+  async generateTahunan(schoolYearId: number): Promise<Buffer> {
+    const result = await this.reportsService.getLaporanTahunan(schoolYearId);
+
+    const rows = result.perBulan.map((row) => `
+      <tr>
+        <td>${BULAN[row.month - 1]} ${row.year}</td>
+        <td class="amount">${this.formatRupiah(row.totalPenerimaan)}</td>
+        <td class="amount">${row.jumlahTransaksi}</td>
+      </tr>`).join('');
+
+    const body = `
+      <table>
+        <tr>
+          <th>Bulan</th>
+          <th class="amount" style="width:160px">Total Penerimaan</th>
+          <th class="amount" style="width:130px">Jumlah Transaksi</th>
+        </tr>
+        ${rows}
+        <tr class="total-row">
+          <td>TOTAL</td>
+          <td class="amount">${this.formatRupiah(result.totalPenerimaan)}</td>
+          <td class="amount">${result.jumlahTransaksi}</td>
+        </tr>
+      </table>`;
+
+    const subtitle = `Tahun Ajaran ID: ${schoolYearId}`;
+    const html = this.wrapHtml('Laporan Tahunan', subtitle, body);
+    return this.pdfService.generateFromHtml(html, { format: 'A4' });
+  }
 }
