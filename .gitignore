@@ -12,9 +12,6 @@ build/
 .env.local
 .env.*.local
 
-# Drizzle migrations (generated)
-apps/backend/drizzle/
-
 # Logs
 *.log
 npm-debug.log*
