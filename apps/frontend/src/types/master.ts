@@ -480,3 +480,21 @@ export interface StudentTransactionData {
   bebas: TxnBebasBill[]
   bulanan: TxnBulananBill[]
 }
+
+export interface TunggakanSummaryGroup {
+  label: string
+  total: number
+  paid: number
+  remaining: number
+}
+
+export interface TunggakanSummary {
+  totalTagihan: number
+  totalPembayaran: number
+  totalTunggakan: number
+  byYear: TunggakanSummaryGroup[]
+  byPos: TunggakanSummaryGroup[]
+  byPembayaran: TunggakanSummaryGroup[]
+  byUnit: TunggakanSummaryGroup[]
+  byClass: TunggakanSummaryGroup[]
+}

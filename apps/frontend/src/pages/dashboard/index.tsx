@@ -58,7 +58,6 @@ export default function DashboardPage() {
           <img src="/logo.png" className="w-24 h-24 object-contain flex-shrink-0" alt="Logo Al-Hasaniyyah" />
           <div>
             <h3 className="text-xl font-bold text-[#1A3829]">YAYASAN PENDIDIKAN ISLAM AL-HASANIYYAH</h3>
-            <p className="text-base text-gray-500 mt-1">Sistem Manajemen Keuangan</p>
             <div className="mt-4 space-y-1.5 text-sm text-gray-600">
               <p>Jl. Raya Cileungsi-Jonggo Km. 10, Cipeucang, Cileungsi, Bogor, Jawa Barat 16820</p>
               <p>(0262) 123-4567</p>

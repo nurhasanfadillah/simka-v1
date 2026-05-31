@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Search, CheckCircle, X } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import type {
@@ -75,6 +76,19 @@ export default function TransaksiBaruPage() {
   const [filterClassId, setFilterClassId] = useState('__all__')
   const [searchResults, setSearchResults] = useState<StudentSearchResult[]>([])
   const [searching, setSearching] = useState(false)
+  const [searchParams] = useSearchParams()
+
+  useEffect(() => {
+    const sid = searchParams.get('studentId')
+    if (sid) {
+      apiClient.get<StudentSearchResult[]>(`/master/students/search`, { params: { q: '' } })
+        .then(r => {
+          const s = r.data.find(s => s.id === parseInt(sid))
+          if (s) handleSelectStudent(s)
+        })
+        .catch(() => {})
+    }
+  }, [])
 
   useEffect(() => {
     Promise.all([

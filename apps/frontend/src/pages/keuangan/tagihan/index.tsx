@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
-import { Eye } from 'lucide-react'
+import { Eye, CreditCard } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { apiClient } from '@/lib/api'
-import type { Bill, BillDetail, Class as _Class, SchoolYear } from '@/types/master'
+import type { Bill, BillDetail, Class as _Class, SchoolYear, PaymentTemplate } from '@/types/master'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,15 +23,18 @@ const STATUSES: Record<string, { label: string; className: string }> = {
 const MONTH_NAMES = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des']
 
 export default function TagihanPage() {
+  const navigate = useNavigate()
   const [data, setData] = useState<Bill[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [classes, setClasses] = useState<_Class[]>([])
   const [schoolYears, setSchoolYears] = useState<SchoolYear[]>([])
+  const [paymentTemplates, setPaymentTemplates] = useState<PaymentTemplate[]>([])
 
   const [filterClassId, setFilterClassId] = useState('')
   const [filterSchoolYearId, setFilterSchoolYearId] = useState('')
   const [filterStatus, setFilterStatus] = useState('')
+  const [filterPaymentTemplateId, setFilterPaymentTemplateId] = useState('')
 
   const [detailModal, setDetailModal] = useState<BillDetail | null>(null)
   const [loadingDetail, setLoadingDetail] = useState(false)
@@ -42,29 +46,30 @@ export default function TagihanPage() {
       if (filterClassId) params.classId = filterClassId
       if (filterSchoolYearId) params.schoolYearId = filterSchoolYearId
       if (filterStatus) params.status = filterStatus
+      if (filterPaymentTemplateId) params.paymentTemplateId = filterPaymentTemplateId
       const res = await apiClient.get<Bill[]>('/billing/bills', { params })
       setData(res.data)
       setError(null)
     } catch {
-      setError('Gagal memuat data. Pastikan server berjalan.')
+      setError('Gagal memuat data.')
     } finally {
       setLoading(false)
     }
-  }, [filterClassId, filterSchoolYearId, filterStatus])
+  }, [filterClassId, filterSchoolYearId, filterStatus, filterPaymentTemplateId])
 
-  useEffect(() => {
-    fetchData()
-  }, [fetchData])
+  useEffect(() => { fetchData() }, [fetchData])
 
   useEffect(() => {
     const fetchDropdowns = async () => {
       try {
-        const [cRes, yRes] = await Promise.all([
+        const [cRes, yRes, pRes] = await Promise.all([
           apiClient.get<_Class[]>('/master/classes'),
           apiClient.get<SchoolYear[]>('/master/school-years'),
+          apiClient.get<PaymentTemplate[]>('/billing/payment-templates'),
         ])
         setClasses(cRes.data)
         setSchoolYears(yRes.data)
+        setPaymentTemplates(pRes.data)
       } catch { /* non-blocking */ }
     }
     fetchDropdowns()
@@ -82,40 +87,33 @@ export default function TagihanPage() {
     }
   }
 
+  const handleBayar = (studentId: number) => {
+    navigate(`/keuangan/transaksi/baru?studentId=${studentId}`)
+  }
+
   return (
     <div className="p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-2">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Data Tagihan</h1>
-          <p className="text-gray-500 mt-1">Daftar semua tagihan siswa</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <select
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700"
-            value={filterClassId}
-            onChange={(e) => setFilterClassId(e.target.value)}
-          >
+      <div className="mb-2">
+        <h1 className="text-2xl font-bold text-gray-900">Data Tagihan</h1>
+        <p className="text-gray-500 mt-1">Daftar semua tagihan siswa</p>
+      </div>
+
+      {/* Filter Bar */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 min-w-[160px]" value={filterSchoolYearId} onChange={(e) => setFilterSchoolYearId(e.target.value)}>
+            <option value="">Tahun Pelajaran</option>
+            {schoolYears.map((y) => (<option key={y.id} value={y.id}>{y.name}</option>))}
+          </select>
+          <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 min-w-[180px]" value={filterClassId} onChange={(e) => setFilterClassId(e.target.value)}>
             <option value="">Semua Kelas</option>
-            {classes.map((c) => (
-              <option key={c.id} value={c.id}>{c.name} — {c.unitName}</option>
-            ))}
+            {classes.map((c) => (<option key={c.id} value={c.id}>{c.name} — {c.unitName}</option>))}
           </select>
-          <select
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700"
-            value={filterSchoolYearId}
-            onChange={(e) => setFilterSchoolYearId(e.target.value)}
-          >
-            <option value="">Semua Tahun</option>
-            {schoolYears.map((y) => (
-              <option key={y.id} value={y.id}>{y.name}</option>
-            ))}
+          <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 min-w-[200px]" value={filterPaymentTemplateId} onChange={(e) => setFilterPaymentTemplateId(e.target.value)}>
+            <option value="">Semua Pembayaran</option>
+            {paymentTemplates.map((p) => (<option key={p.id} value={p.id}>{p.name}</option>))}
           </select>
-          <select
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700"
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-          >
+          <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 min-w-[160px]" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
             <option value="">Semua Status</option>
             <option value="belum_bayar">Belum Bayar</option>
             <option value="cicilan">Cicilan</option>
@@ -123,50 +121,36 @@ export default function TagihanPage() {
           </select>
         </div>
       </div>
+
       <p className="text-xs italic text-gray-400 mb-4">
-        Daftar tagihan yang telah digenerate untuk setiap siswa. Gunakan filter untuk mencari tagihan berdasarkan kelas, tahun pelajaran, atau status pembayaran. Klik baris untuk melihat detail tagihan per bulan.
+        Daftar tagihan yang telah digenerate untuk setiap siswa. Gunakan filter di atas untuk mencari tagihan berdasarkan tahun pelajaran, kelas, pembayaran, atau status. Klik Bayar untuk langsung membuka transaksi siswa tersebut.
       </p>
 
-      {/* Error banner */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm mb-6">
-          {error}
-        </div>
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm mb-6">{error}</div>
       )}
 
-      {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="bg-gray-50">
-              {['No.', 'Siswa', 'NIS', 'Kelas', 'POS', 'Nominal', 'Status', 'Aksi'].map((col) => (
-                <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {col}
-                </th>
+              {['NIS', 'Siswa', 'Kelas', 'Pembayaran', 'Nominal', 'Status', 'Aksi'].map((col) => (
+                <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i}>
-                  <td colSpan={8} className="px-6 py-4">
-                    <div className="animate-pulse bg-gray-200 h-6 rounded" />
-                  </td>
-                </tr>
+                <tr key={i}><td colSpan={7} className="px-6 py-4"><div className="animate-pulse bg-gray-200 h-6 rounded" /></td></tr>
               ))
             ) : data.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="px-6 py-8 text-center text-sm text-gray-400">
-                  Belum ada data tagihan
-                </td>
-              </tr>
+              <tr><td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-400">Belum ada data tagihan</td></tr>
             ) : (
               data.map((row) => (
                 <tr key={row.id} className="border-t border-gray-100 hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-700 font-mono">#{row.id}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 font-mono">{row.nis}</td>
                   <td className="px-6 py-4 text-sm text-gray-800 font-medium">{row.studentName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{row.nis}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{row.className}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{row.paymentPostName}</td>
                   <td className="px-6 py-4 text-sm font-semibold text-[#00A651]">{formatRupiah(row.totalAmount)}</td>
@@ -176,10 +160,14 @@ export default function TagihanPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <Button size="sm" variant="outline" onClick={() => openDetail(row)} disabled={loadingDetail}>
-                      <Eye className="w-3.5 h-3.5 mr-1" />
-                      Detail
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-[#00A651]" title="Bayar" onClick={() => handleBayar(row.studentId)}>
+                        <CreditCard className="w-4 h-4" />
+                      </Button>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-gray-500" title="Detail" onClick={() => openDetail(row)} disabled={loadingDetail}>
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -188,7 +176,6 @@ export default function TagihanPage() {
         </table>
       </div>
 
-      {/* Detail Modal */}
       <Dialog open={!!detailModal} onOpenChange={() => setDetailModal(null)}>
         <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
@@ -198,7 +185,7 @@ export default function TagihanPage() {
             <div className="space-y-4 pt-2">
               <div className="grid grid-cols-2 gap-3 text-sm bg-gray-50 rounded-lg p-4">
                 <div><span className="text-gray-500">Kelas:</span> <span className="font-medium">{detailModal.className}</span></div>
-                <div><span className="text-gray-500">POS:</span> <span className="font-medium">{detailModal.paymentPostName}</span></div>
+                <div><span className="text-gray-500">Pembayaran:</span> <span className="font-medium">{detailModal.paymentPostName}</span></div>
                 <div><span className="text-gray-500">Tahun:</span> <span className="font-medium">{detailModal.schoolYearName}</span></div>
                 <div><span className="text-gray-500">Total:</span> <span className="font-semibold text-[#00A651]">{formatRupiah(detailModal.totalAmount)}</span></div>
                 <div className="col-span-2">

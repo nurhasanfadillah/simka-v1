@@ -10,6 +10,7 @@ interface BillFilters {
   classId?: number;
   schoolYearId?: number;
   paymentTemplateId?: number;
+  paymentPostId?: number;
   status?: 'belum_bayar' | 'cicilan' | 'lunas';
 }
 
@@ -30,10 +31,8 @@ export class BillsService {
         schoolYearName: schoolYears.name,
         schoolYearStart: schoolYears.startYear,
         paymentTemplateId: bills.paymentTemplateId,
-        paymentPostName: paymentPosts.name,
-        paymentPostCode: paymentPosts.code,
+        paymentPostName: paymentTemplates.name,
         paymentPostType: paymentPosts.type,
-        paymentTemplateName: paymentTemplates.name,
         totalAmount: bills.totalAmount,
         status: bills.status,
         createdAt: bills.createdAt,
@@ -57,6 +56,7 @@ export class BillsService {
     if (filters.classId) conditions.push(eq(classes.id, filters.classId));
     if (filters.schoolYearId) conditions.push(eq(bills.schoolYearId, filters.schoolYearId));
     if (filters.paymentTemplateId) conditions.push(eq(bills.paymentTemplateId, filters.paymentTemplateId));
+    if (filters.paymentPostId) conditions.push(eq(paymentPosts.id, filters.paymentPostId));
     if (filters.status) conditions.push(eq(bills.status, filters.status));
 
     return this.buildBaseQuery()
@@ -180,7 +180,7 @@ export class BillsService {
       if (postType === 'bebas') {
         bebas.push({
           id: bill.id,
-          paymentPostName: (bill as any).paymentTemplateName ?? bill.paymentPostName,
+          paymentPostName: bill.paymentPostName,
           totalAmount: bill.totalAmount,
           paidAmount,
           remaining,
@@ -196,7 +196,7 @@ export class BillsService {
         }));
         bulanan.push({
           id: bill.id,
-          paymentPostName: (bill as any).paymentTemplateName ?? bill.paymentPostName,
+          paymentPostName: bill.paymentPostName,
           schoolYearName: bill.schoolYearName,
           startYear: (bill as any).schoolYearStart,
           months,
@@ -213,6 +213,78 @@ export class BillsService {
       totalTunggakan,
       bebas,
       bulanan,
+    };
+  }
+
+  async getTunggakanSummary(schoolYearId?: number) {
+    const billQuery = this.db
+      .select({
+        id: bills.id,
+        totalAmount: bills.totalAmount,
+        schoolYearId: bills.schoolYearId,
+        schoolYearName: schoolYears.name,
+        paymentPostId: paymentPosts.id,
+        paymentPostName: paymentPosts.name,
+        paymentTemplateId: paymentTemplates.id,
+        paymentTemplateName: paymentTemplates.name,
+        unitId: schoolUnits.id,
+        unitName: schoolUnits.name,
+        classId: classes.id,
+        className: classes.name,
+      })
+      .from(bills)
+      .innerJoin(paymentTemplates, eq(bills.paymentTemplateId, paymentTemplates.id))
+      .innerJoin(paymentPosts, eq(paymentTemplates.paymentPostId, paymentPosts.id))
+      .innerJoin(schoolYears, eq(bills.schoolYearId, schoolYears.id))
+      .innerJoin(studentClasses, and(
+        eq(studentClasses.studentId, bills.studentId),
+        eq(studentClasses.schoolYearId, bills.schoolYearId),
+      ))
+      .innerJoin(classes, eq(studentClasses.classId, classes.id))
+      .innerJoin(schoolUnits, eq(classes.schoolUnitId, schoolUnits.id));
+
+    if (schoolYearId) {
+      billQuery.where(eq(bills.schoolYearId, schoolYearId));
+    }
+
+    const allBills = await billQuery;
+    const billIds = allBills.map(b => b.id);
+
+    const paymentsData = billIds.length > 0
+      ? await this.db
+          .select({ billId: transactionItems.billId, paid: sum(transactionItems.amount).mapWith(Number) })
+          .from(transactionItems)
+          .innerJoin(transactions, eq(transactionItems.transactionId, transactions.id))
+          .where(and(inArray(transactionItems.billId, billIds), eq(transactions.status, 'aktif')))
+          .groupBy(transactionItems.billId)
+      : [];
+
+    const paidMap: Record<number, number> = {};
+    for (const p of paymentsData) paidMap[p.billId] = (paidMap[p.billId] ?? 0) + (p.paid ?? 0);
+
+    const agg = (nameField: string, idField: string) => {
+      const groups: Record<string, { label: string; total: number; paid: number }> = {};
+      for (const b of allBills) {
+        const gid = String((b as any)[idField] ?? '_');
+        if (!groups[gid]) groups[gid] = { label: (b as any)[nameField] ?? '-', total: 0, paid: 0 };
+        groups[gid].total += b.totalAmount;
+        groups[gid].paid += (paidMap[b.id] ?? 0);
+      }
+      return Object.values(groups).map(g => ({ label: g.label, total: g.total, paid: g.paid, remaining: g.total - g.paid }));
+    };
+
+    const allTotal = allBills.reduce((s, b) => s + b.totalAmount, 0);
+    const allPaid = allBills.reduce((s, b) => s + (paidMap[b.id] ?? 0), 0);
+
+    return {
+      totalTagihan: allTotal,
+      totalPembayaran: allPaid,
+      totalTunggakan: allTotal - allPaid,
+      byYear: agg('schoolYearName', 'schoolYearId'),
+      byPos: agg('paymentPostName', 'paymentPostId'),
+      byPembayaran: agg('paymentTemplateName', 'paymentTemplateId'),
+      byUnit: agg('unitName', 'unitId'),
+      byClass: agg('className', 'classId'),
     };
   }
 }

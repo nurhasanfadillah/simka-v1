@@ -13,6 +13,7 @@ export class BillsController {
     @Query('classId') classId?: string,
     @Query('schoolYearId') schoolYearId?: string,
     @Query('paymentTemplateId') paymentTemplateId?: string,
+    @Query('paymentPostId') paymentPostId?: string,
     @Query('status') status?: 'belum_bayar' | 'cicilan' | 'lunas',
   ) {
     return this.service.findAll({
@@ -20,6 +21,7 @@ export class BillsController {
       classId: classId ? parseInt(classId, 10) : undefined,
       schoolYearId: schoolYearId ? parseInt(schoolYearId, 10) : undefined,
       paymentTemplateId: paymentTemplateId ? parseInt(paymentTemplateId, 10) : undefined,
+      paymentPostId: paymentPostId ? parseInt(paymentPostId, 10) : undefined,
       status,
     });
   }
@@ -34,6 +36,12 @@ export class BillsController {
       classId: classId ? parseInt(classId, 10) : undefined,
       schoolYearId: schoolYearId ? parseInt(schoolYearId, 10) : undefined,
     });
+  }
+
+  @Get('tunggakan/summary')
+  @RequirePermissions('bill.view')
+  getTunggakanSummary(@Query('schoolYearId') schoolYearId?: string) {
+    return this.service.getTunggakanSummary(schoolYearId ? parseInt(schoolYearId, 10) : undefined);
   }
 
   @Get('student-transaction/:studentId')
