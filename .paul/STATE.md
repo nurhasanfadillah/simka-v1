@@ -3,12 +3,13 @@
 ## Current Position
 
 Milestone: v2.7 — Transaksi Baru + PDF Enhancements
-Status: ACTIVE — multiple features deployed
-Last activity: 2026-05-31 — Bill-print PDF subtotals + Cetak Tagihan
+Status: ACTIVE — codebase mapped
+Last activity: 2026-05-31 — CODEBASE.md generated, context files created
 
 Progress:
 - UI Audit (v2.6): [██████████] 100% ✅
 - Transaksi + PDF (v2.7): [████████░░] 80%
+- Codebase mapped: ✅ (62 endpoints, 24 pages, 16 tables)
 
 ## Loop Position
 
