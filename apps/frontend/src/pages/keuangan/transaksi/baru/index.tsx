@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { AlertDialog } from '@/components/ui/alert-dialog'
 
 const formatRupiah = (v: number) =>
   new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(v)
@@ -65,6 +66,7 @@ export default function TransaksiBaruPage() {
   const [notes, setNotes] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const [schoolYears, setSchoolYears] = useState<SchoolYear[]>([])
   const [units, setUnits] = useState<SchoolUnit[]>([])
@@ -411,7 +413,7 @@ export default function TransaksiBaruPage() {
                               const inCart = isInCart(bill.id, m.id)
                               const cellCls = monthCellClass(m, bill.status)
                               const canClick = m.status !== 'lunas' && monthInBilling(m.month, m.year)
-                              const displayAmount = bill.status === 'cicilan' && m.paidAmount > 0 ? m.remaining : m.amount
+                              const displayAmount = m.status === 'lunas' ? 0 : bill.status === 'cicilan' ? m.remaining : m.amount
                               return (
                                 <td
                                   key={monthNum}
@@ -448,7 +450,7 @@ export default function TransaksiBaruPage() {
                     </table>
                   </div>
                   <div className="px-4 py-2 bg-gray-50 border-t flex gap-4 text-xs text-gray-500">
-                    <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-yellow-100 border border-yellow-300" /> Masuk Tagihan</span>
+                    <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-yellow-100 border border-yellow-300" /> Belum Bayar</span>
                     <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-purple-100 border border-purple-300" /> Cicilan</span>
                     <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-gray-100 border border-gray-300" /> Belum Masuk</span>
                     <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-green-100 border border-green-300" /> Lunas</span>
@@ -510,7 +512,7 @@ export default function TransaksiBaruPage() {
                       <Label className="text-xs">Catatan (opsional)</Label>
                       <Input placeholder="Pembayaran SPP..." value={notes} onChange={e => setNotes(e.target.value)} className="h-9 text-sm" />
                     </div>
-                    <Button className="bg-accent hover:bg-accent/90 whitespace-nowrap" onClick={handleSubmit} disabled={saving || cartTotal <= 0}>
+                    <Button className="bg-accent hover:bg-accent/90 whitespace-nowrap" onClick={() => setShowConfirm(true)} disabled={saving || cartTotal <= 0}>
                       {saving ? 'Menyimpan...' : `Konfirmasi — ${formatRupiah(cartTotal)}`}
                     </Button>
                   </div>
@@ -541,6 +543,16 @@ export default function TransaksiBaruPage() {
           </div>
         </div>
       )}
+      {/* Confirmation Dialog */}
+      <AlertDialog
+        open={showConfirm}
+        onOpenChange={setShowConfirm}
+        title="Konfirmasi Pembayaran"
+        description={`Anda akan mencatat ${cartItems.length} item pembayaran untuk ${selectedStudent?.name ?? 'siswa'}. Total: ${formatRupiah(cartTotal)}`}
+        actionLabel={saving ? 'Menyimpan...' : 'Ya, Proses Transaksi'}
+        onAction={handleSubmit}
+        loading={saving}
+      />
       </div>
     </div>
   )
