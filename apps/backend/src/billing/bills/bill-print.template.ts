@@ -34,8 +34,15 @@ export function buildBillPrintHtml(data: BillPrintData): string {
       <td style="text-align:right">${formatRupiah(b.totalAmount)}</td>
       <td style="text-align:right">${formatRupiah(b.paidAmount)}</td>
       <td style="text-align:right;color:${b.status === 'lunas' ? '#059669' : '#dc2626'}">${formatRupiah(b.remaining)}</td>
-      <td style="text-align:center"><span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:9px;font-weight:600;${b.status === 'lunas' ? 'background:#d1fae5;color:#065f46' : b.status === 'cicilan' ? 'background:#e0e7ff;color:#3730a3' : 'background:#fef3c7;color:#92400e'}">${b.status === 'lunas' ? 'Lunas' : b.status === 'cicilan' ? 'Cicilan' : 'Belum Bayar'}</span></td>
     </tr>`).join('');
+
+  const bebasSubtotal = `
+    <tr style="font-weight:700;background:#eef5f0;border-top:2px solid #1A3829">
+      <td>Subtotal</td>
+      <td style="text-align:right">${formatRupiah(data.bebas.reduce((s, b) => s + b.totalAmount, 0))}</td>
+      <td style="text-align:right">${formatRupiah(data.bebas.reduce((s, b) => s + b.paidAmount, 0))}</td>
+      <td style="text-align:right">${formatRupiah(data.bebas.reduce((s, b) => s + b.remaining, 0))}</td>
+    </tr>`;
 
   const bulananRows = data.bulanan.map((b) => {
     const monthCells = [7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map((monthNum) => {
@@ -52,9 +59,23 @@ export function buildBillPrintHtml(data: BillPrintData): string {
       <td style="text-align:right;font-size:10px">${formatRupiah(b.totalAmount)}</td>
       <td style="text-align:right;font-size:10px">${formatRupiah(b.paidAmount)}</td>
       <td style="text-align:right;font-size:10px;color:#dc2626">${formatRupiah(b.remaining)}</td>
-      <td style="text-align:center"><span style="display:inline-block;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:600;${b.status === 'lunas' ? 'background:#d1fae5;color:#065f46' : b.status === 'cicilan' ? 'background:#e0e7ff;color:#3730a3' : 'background:#fef3c7;color:#92400e'}">${b.status === 'lunas' ? 'Lunas' : b.status === 'cicilan' ? 'Cicilan' : 'Belum Bayar'}</span></td>
     </tr>`;
   }).join('');
+
+  const bulananSubtotal = `
+    <tr style="font-weight:700;background:#eef5f0;border-top:2px solid #1A3829">
+      <td style="font-size:10px">Subtotal</td>
+      ${[7,8,9,10,11,12,1,2,3,4,5,6].map(monthNum => {
+        const total = data.bulanan.reduce((s, bill) => {
+          const m = bill.months.find(bm => bm.month === monthNum);
+          return s + (m ? m.amount : 0);
+        }, 0);
+        return `<td style="text-align:center;font-size:8px;font-weight:700">${total > 0 ? formatRupiah(total) : '-'}</td>`;
+      }).join('')}
+      <td style="text-align:right;font-size:10px;font-weight:700">${formatRupiah(data.bulanan.reduce((s, b) => s + b.totalAmount, 0))}</td>
+      <td style="text-align:right;font-size:10px;font-weight:700">${formatRupiah(data.bulanan.reduce((s, b) => s + b.paidAmount, 0))}</td>
+      <td style="text-align:right;font-size:10px;font-weight:700;color:#dc2626">${formatRupiah(data.bulanan.reduce((s, b) => s + b.remaining, 0))}</td>
+    </tr>`;
 
   return `<!DOCTYPE html>
 <html lang="id">
@@ -100,13 +121,16 @@ export function buildBillPrintHtml(data: BillPrintData): string {
     <div><span class="label">Kelas</span>: ${data.student.activeClassName ?? '-'} — ${data.student.activeUnitName ?? '-'}</div>
   </div>
   <hr class="divider" style="margin-top:4px" />
+  <div style="text-align:center;padding:8px 24px 4px">
+    <h2 style="margin:0;font-size:13px;color:#1A3829;font-weight:800;letter-spacing:2px;text-transform:uppercase">DATA KEUANGAN SISWA</h2>
+  </div>
 
   ${hasBebas ? `
   <div class="section">
     <h2>Tagihan Bebas</h2>
     <table>
-      <thead><tr><th>Nama Pembayaran</th><th style="width:100px;text-align:right">Total</th><th style="width:100px;text-align:right">Dibayar</th><th style="width:100px;text-align:right">Sisa</th><th style="width:80px;text-align:center">Status</th></tr></thead>
-      <tbody>${bebasRows}</tbody>
+      <thead><tr><th>Nama Pembayaran</th><th style="width:100px;text-align:right">Total</th><th style="width:100px;text-align:right">Dibayar</th><th style="width:100px;text-align:right">Sisa</th></tr></thead>
+      <tbody>${bebasRows}${bebasSubtotal}</tbody>
     </table>
   </div>` : ''}
 
@@ -121,10 +145,9 @@ export function buildBillPrintHtml(data: BillPrintData): string {
           <th style="width:60px;text-align:right">Total</th>
           <th style="width:60px;text-align:right">Bayar</th>
           <th style="width:60px;text-align:right">Sisa</th>
-          <th style="width:60px;text-align:center">Status</th>
         </tr>
       </thead>
-      <tbody>${bulananRows}</tbody>
+      <tbody>${bulananRows}${bulananSubtotal}</tbody>
     </table>
     <div class="legend">
       <span><span class="dot" style="background:#fef3c7;border-color:#f59e0b"></span> Belum Bayar</span>
