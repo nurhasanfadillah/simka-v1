@@ -199,7 +199,7 @@ export default function TransaksiBaruPage() {
 
   const monthCellClass = (m: TxnBulananMonth, billStatus: string) => {
     if (m.status === 'lunas') return 'bg-green-100 text-green-700'
-    if (billStatus === 'cicilan' && m.paidAmount > 0) return 'bg-purple-100 text-purple-700 cursor-pointer hover:bg-purple-200'
+    if (billStatus === 'cicilan') return 'bg-purple-100 text-purple-700 cursor-pointer hover:bg-purple-200'
     if (monthInBilling(m.month, m.year)) return 'bg-yellow-100 text-yellow-800 cursor-pointer hover:bg-yellow-200'
     return 'bg-gray-100 text-gray-400'
   }
@@ -465,14 +465,14 @@ export default function TransaksiBaruPage() {
 
               {/* Cart */}
               {cartItems.length > 0 && (
-                <div className="sticky bottom-0 bg-white border-t-2 border-accent shadow-lg z-10 max-h-[40vh] flex flex-col">
-                  <div className="px-4 py-2 bg-accent/5 border-b border-accent/20 shrink-0">
+                <div className="sticky bottom-0 bg-white border-t-2 border-accent shadow-lg z-10">
+                  <div className="px-4 py-2 bg-accent/5 border-b border-accent/20">
                     <span className="font-semibold text-accent text-sm">Keranjang Pembayaran ({cartItems.length} item)</span>
                   </div>
-                  <div className="overflow-y-auto flex-1">
+                  <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-gray-100 sticky top-0 bg-gray-50">
+                        <tr className="border-b border-gray-100">
                           <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Pembayaran</th>
                           <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Bulan</th>
                           <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 w-40">Nominal</th>
@@ -505,7 +505,7 @@ export default function TransaksiBaruPage() {
                       </tfoot>
                     </table>
                   </div>
-                  <div className="px-4 py-3 border-t border-gray-100 flex items-end gap-4 shrink-0 bg-white">
+                  <div className="px-4 py-3 border-t border-gray-100 flex items-end gap-4">
                     <div className="flex-1">
                       <Label className="text-xs">Catatan (opsional)</Label>
                       <Input placeholder="Pembayaran SPP..." value={notes} onChange={e => setNotes(e.target.value)} className="h-9 text-sm" />
