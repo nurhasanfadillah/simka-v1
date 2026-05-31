@@ -363,62 +363,69 @@ export default function TransaksiBaruPage() {
               )}
 
               {/* Bulanan Bills Table */}
-              {txnData.bulanan.length > 0 && txnData.bulanan.map(bill => (
-                <div key={bill.id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-                  <div className="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
-                    <div>
-                      <span className="font-medium text-gray-700 text-sm">{bill.paymentPostName}</span>
-                      <span className="ml-2 text-xs text-gray-400">({bill.schoolYearName})</span>
-                    </div>
-                    <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGES[bill.status]}`}>{STATUS_LABELS[bill.status]}</span>
+              {txnData.bulanan.length > 0 && (
+                <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                  <div className="px-4 py-3 bg-gray-50 border-b">
+                    <span className="font-medium text-gray-700 text-sm">Tagihan Bulanan</span>
+                    <span className="ml-2 inline-flex px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-600">{txnData.bulanan.length}</span>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-gray-100">
-                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 w-32">Pembayaran</th>
+                          <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Nama Pembayaran</th>
                           {[7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(m => (
                             <th key={m} className="px-1 py-2 text-center text-[10px] font-medium text-gray-500 w-14">{MONTH_ABBR[m]}</th>
                           ))}
                           <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Total</th>
                           <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Bayar</th>
                           <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Sisa</th>
+                          <th className="px-3 py-2 text-center text-xs font-medium text-gray-500">Status</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td className="px-3 py-2 font-medium text-gray-800 text-xs">{bill.paymentPostName}</td>
-                          {[7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(monthNum => {
-                            const m = bill.months.find(bm => bm.month === monthNum)
-                            if (!m) return <td key={monthNum} className="px-1 py-2 text-center text-gray-300">-</td>
-                            const inCart = isInCart(bill.id, m.id)
-                            const cellCls = monthCellClass(m)
-                            const canClick = m.status !== 'lunas' && monthInBilling(m.month, m.year)
-                            return (
-                              <td
-                                key={monthNum}
-                                className={`px-1 py-2 text-center text-[10px] font-mono border border-gray-100 ${cellCls} ${inCart ? 'ring-2 ring-[#00A651] ring-inset' : ''}`}
-                                onClick={() => { if (canClick) addToCart(bill.id, bill.paymentPostName, m.amount, m.id, `${MONTH_ABBR[m.month]} ${m.year}`) }}
-                              >
-                                {formatRupiah(m.amount)}
-                              </td>
-                            )
-                          })}
-                          <td className="px-3 py-2 text-right text-gray-600 font-mono text-xs">{formatRupiah(bill.totalAmount)}</td>
-                          <td className="px-3 py-2 text-right text-blue-600 font-mono text-xs">{formatRupiah(bill.paidAmount)}</td>
-                          <td className="px-3 py-2 text-right text-red-600 font-mono text-xs">{formatRupiah(bill.remaining)}</td>
-                        </tr>
+                        {txnData.bulanan.map(bill => (
+                          <tr key={bill.id} className="border-b border-gray-50">
+                            <td className="px-3 py-2 font-medium text-gray-800 text-xs">
+                              {bill.paymentPostName}
+                            </td>
+                            {[7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(monthNum => {
+                              const m = bill.months.find(bm => bm.month === monthNum)
+                              if (!m) return <td key={monthNum} className="px-1 py-2 text-center text-gray-300 text-[10px]">-</td>
+                              const inCart = isInCart(bill.id, m.id)
+                              const cellCls = monthCellClass(m)
+                              const canClick = m.status !== 'lunas' && monthInBilling(m.month, m.year)
+                              return (
+                                <td
+                                  key={monthNum}
+                                  className={`px-1 py-2 text-center text-[10px] font-mono border border-gray-100 ${cellCls} ${inCart ? 'ring-2 ring-[#00A651] ring-inset' : ''}`}
+                                  onClick={() => { if (canClick) addToCart(bill.id, bill.paymentPostName, m.amount, m.id, `${MONTH_ABBR[m.month]} ${m.year}`) }}
+                                >
+                                  {formatRupiah(m.amount)}
+                                </td>
+                              )
+                            })}
+                            <td className="px-3 py-2 text-right text-gray-600 font-mono text-xs">{formatRupiah(bill.totalAmount)}</td>
+                            <td className="px-3 py-2 text-right text-blue-600 font-mono text-xs">{formatRupiah(bill.paidAmount)}</td>
+                            <td className="px-3 py-2 text-right text-red-600 font-mono text-xs">{formatRupiah(bill.remaining)}</td>
+                            <td className="px-3 py-2 text-center"><span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium ${STATUS_BADGES[bill.status]}`}>{STATUS_LABELS[bill.status]}</span></td>
+                          </tr>
+                        ))}
                       </tbody>
                       <tfoot>
                         <tr className="bg-gray-50 font-medium text-xs">
-                          <td className="px-3 py-2 text-gray-500">Subtotal</td>
+                          <td className="px-3 py-2 text-gray-700">Subtotal</td>
                           {[7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(monthNum => {
-                            const total = bill.months.filter(bm => bm.month === monthNum).reduce((s, bm) => s + bm.amount, 0)
+                            const total = txnData.bulanan.reduce((s, bill) => {
+                              const m = bill.months.find(bm => bm.month === monthNum)
+                              return s + (m ? m.amount : 0)
+                            }, 0)
                             return <td key={monthNum} className="px-1 py-2 text-center text-gray-800 font-mono">{total > 0 ? formatRupiah(total) : '-'}</td>
                           })}
-                          <td className="px-3 py-2 text-right text-gray-800">{formatRupiah(bill.totalAmount)}</td>
-                          <td className="px-3 py-2 text-right text-blue-700">{formatRupiah(bill.paidAmount)}</td>
-                          <td className="px-3 py-2 text-right text-red-700">{formatRupiah(bill.remaining)}</td>
+                          <td className="px-3 py-2 text-right text-gray-800">{formatRupiah(txnData.bulanan.reduce((s, b) => s + b.totalAmount, 0))}</td>
+                          <td className="px-3 py-2 text-right text-blue-700">{formatRupiah(txnData.bulanan.reduce((s, b) => s + b.paidAmount, 0))}</td>
+                          <td className="px-3 py-2 text-right text-red-700">{formatRupiah(txnData.bulanan.reduce((s, b) => s + b.remaining, 0))}</td>
+                          <td></td>
                         </tr>
                       </tfoot>
                     </table>
@@ -429,7 +436,7 @@ export default function TransaksiBaruPage() {
                     <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-green-100 border border-green-300" /> Lunas</span>
                   </div>
                 </div>
-              ))}
+              )}
 
               {txnData.bebas.length === 0 && txnData.bulanan.length === 0 && (
                 <div className="text-center py-8 bg-white rounded-xl border border-gray-100">

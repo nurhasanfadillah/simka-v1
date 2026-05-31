@@ -703,3 +703,8 @@ Arsitektur ini sudah siap untuk:
 Ini sudah mendekati pola ERP akademik-keuangan skala production.
 
 Login: admin@alhasaniyyah.sch.id / Admin123!
+
+MY VPS
+IP: 129.226.213.135
+USERNAME: ubuntu
+PASSWORD: storm-26#-mountain

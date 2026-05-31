@@ -33,6 +33,7 @@ export class BillsService {
         paymentPostName: paymentPosts.name,
         paymentPostCode: paymentPosts.code,
         paymentPostType: paymentPosts.type,
+        paymentTemplateName: paymentTemplates.name,
         totalAmount: bills.totalAmount,
         status: bills.status,
         createdAt: bills.createdAt,
@@ -164,26 +165,29 @@ export class BillsService {
     let totalTunggakan = 0;
 
     for (const bill of allBills) {
+      const postType = (bill as any).paymentPostType ?? 'bebas';
+      const billMonthsList = monthsByBill[bill.id] ?? [];
+      const computedTotal = postType === 'bulanan'
+        ? billMonthsList.reduce((s, m) => s + m.amount, 0)
+        : bill.totalAmount;
       const paidAmount = paymentByBill[bill.id] ?? 0;
-      const remaining = bill.totalAmount - paidAmount;
+      const remaining = computedTotal - paidAmount;
 
       if (bill.status !== 'lunas') {
         totalTunggakan += remaining;
       }
 
-      const postType = (bill as any).paymentPostType ?? 'bebas';
-
       if (postType === 'bebas') {
         bebas.push({
           id: bill.id,
-          paymentPostName: bill.paymentPostName,
+          paymentPostName: (bill as any).paymentTemplateName ?? bill.paymentPostName,
           totalAmount: bill.totalAmount,
           paidAmount,
           remaining,
           status: bill.status,
         });
       } else {
-        const months = (monthsByBill[bill.id] ?? []).map(m => ({
+        const months = billMonthsList.map(m => ({
           id: m.id,
           month: m.month,
           year: m.year,
@@ -192,11 +196,11 @@ export class BillsService {
         }));
         bulanan.push({
           id: bill.id,
-          paymentPostName: bill.paymentPostName,
+          paymentPostName: (bill as any).paymentTemplateName ?? bill.paymentPostName,
           schoolYearName: bill.schoolYearName,
           startYear: (bill as any).schoolYearStart,
           months,
-          totalAmount: bill.totalAmount,
+          totalAmount: computedTotal,
           paidAmount,
           remaining,
           status: bill.status,
