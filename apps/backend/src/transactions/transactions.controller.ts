@@ -45,8 +45,8 @@ export class TransactionsController {
     @Res() res: Response,
   ) {
     const data = await this.service.getReceiptData(id);
-    const html = buildReceiptHtml(data as any);
-    const pdf = await this.pdfService.generateFromHtml(html);
+    const html = buildReceiptHtml(data);
+    const pdf = await this.pdfService.generateFromHtml(html, { format: 'A4', landscape: true });
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `inline; filename="kwitansi-${data.transactionNumber}.pdf"`,

@@ -7,6 +7,8 @@ import {
   transactionItems,
   bills,
   billMonths,
+  paymentPosts,
+  paymentTemplates,
 } from '../db/schema/financial.schema';
 import { students } from '../db/schema/academic.schema';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -199,7 +201,45 @@ export class TransactionsService {
   }
 
   async getReceiptData(id: number) {
-    return this.findOne(id);
+    const [transaction] = await this.db
+      .select({
+        id: transactions.id,
+        transactionNumber: transactions.transactionNumber,
+        studentId: transactions.studentId,
+        studentName: students.name,
+        nis: students.nis,
+        totalAmount: transactions.totalAmount,
+        status: transactions.status,
+        notes: transactions.notes,
+        voidReason: transactions.voidReason,
+        createdAt: transactions.createdAt,
+      })
+      .from(transactions)
+      .innerJoin(students, eq(transactions.studentId, students.id))
+      .where(eq(transactions.id, id))
+      .limit(1);
+
+    if (!transaction) throw new NotFoundException('Transaksi tidak ditemukan');
+
+    const items = await this.db
+      .select({
+        id: transactionItems.id,
+        billId: transactionItems.billId,
+        billMonthId: transactionItems.billMonthId,
+        amount: transactionItems.amount,
+        paymentPostName: paymentPosts.name,
+        paymentPostCode: paymentPosts.code,
+        month: billMonths.month,
+        year: billMonths.year,
+      })
+      .from(transactionItems)
+      .innerJoin(bills, eq(transactionItems.billId, bills.id))
+      .innerJoin(paymentTemplates, eq(bills.paymentTemplateId, paymentTemplates.id))
+      .innerJoin(paymentPosts, eq(paymentTemplates.paymentPostId, paymentPosts.id))
+      .leftJoin(billMonths, eq(transactionItems.billMonthId, billMonths.id))
+      .where(eq(transactionItems.transactionId, id));
+
+    return { ...transaction, items };
   }
 
   async voidTransaction(id: number, voidedById: number, voidReason: string) {
