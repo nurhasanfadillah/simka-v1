@@ -199,15 +199,16 @@ export default function TransaksiBaruPage() {
     return false
   }
 
-  const monthCellClass = (m: TxnBulananMonth, billStatus: string) => {
+  const monthCellClass = (m: TxnBulananMonth) => {
     if (m.status === 'lunas') return 'bg-green-100 text-green-700'
-    if (billStatus === 'cicilan') return 'bg-purple-100 text-purple-700 cursor-pointer hover:bg-purple-200'
+    if (m.paidAmount > 0) return 'bg-purple-100 text-purple-700 cursor-pointer hover:bg-purple-200'
     if (monthInBilling(m.month, m.year)) return 'bg-yellow-100 text-yellow-800 cursor-pointer hover:bg-yellow-200'
     return 'bg-gray-100 text-gray-400'
   }
 
   const handleSubmit = async () => {
     if (!selectedStudent) return
+    setShowConfirm(false)
     try {
       setSaving(true)
       setError(null)
@@ -411,9 +412,9 @@ export default function TransaksiBaruPage() {
                               const m = bill.months.find(bm => bm.month === monthNum)
                               if (!m) return <td key={monthNum} className="px-1 py-2 text-center text-gray-300 text-xs">-</td>
                               const inCart = isInCart(bill.id, m.id)
-                              const cellCls = monthCellClass(m, bill.status)
+                              const cellCls = monthCellClass(m)
                               const canClick = m.status !== 'lunas' && monthInBilling(m.month, m.year)
-                              const displayAmount = m.status === 'lunas' ? 0 : bill.status === 'cicilan' ? m.remaining : m.amount
+                              const displayAmount = m.status === 'lunas' ? 0 : m.paidAmount > 0 ? m.remaining : m.amount
                               return (
                                 <td
                                   key={monthNum}
