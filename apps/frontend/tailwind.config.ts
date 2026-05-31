@@ -5,6 +5,9 @@ const config: Config = {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -12,13 +15,13 @@ const config: Config = {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: '#1A3829',
-          light: '#2D5A3D',
+          DEFAULT: 'hsl(var(--primary))',
+          light: 'hsl(156 39% 27%)',
           foreground: 'hsl(var(--primary-foreground))',
         },
         accent: {
-          DEFAULT: '#00A651',
-          light: '#E8F5EE',
+          DEFAULT: 'hsl(var(--accent))',
+          light: 'hsl(148 42% 94%)',
           foreground: 'hsl(var(--accent-foreground))',
         },
         secondary: {
@@ -43,13 +46,18 @@ const config: Config = {
         },
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        lg: 'var(--radius-card)',
+        md: 'var(--radius-input)',
+        sm: 'var(--radius)',
+      },
+      boxShadow: {
+        'card': 'var(--shadow-card)',
+        'card-md': 'var(--shadow-md)',
+        'card-lg': 'var(--shadow-lg)',
       },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 }
 
 export default config

@@ -2,6 +2,17 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Users, CreditCard, Banknote, BarChart2, ChevronRight } from 'lucide-react'
 import { apiClient } from '@/lib/api'
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@/components/ui/badge'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import type { DashboardStats, Transaction } from '@/types/dashboard'
 
 const formatRupiah = (value: number) =>
@@ -44,184 +55,178 @@ export default function DashboardPage() {
   }, [])
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Error Banner */}
+    <div className="p-[var(--spacing-page)] space-y-[var(--spacing-section)] page-transition">
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm">
           {error}
         </div>
       )}
 
-      {/* Info Lembaga — full width, invisible card */}
-      <div className="py-6">
-        <div className="flex items-start gap-6">
-          <img src="/logo.png" className="w-24 h-24 object-contain flex-shrink-0" alt="Logo Al-Hasaniyyah" />
-          <div>
-            <h3 className="text-xl font-bold text-[#1A3829]">YAYASAN PENDIDIKAN ISLAM AL-HASANIYYAH</h3>
-            <div className="mt-4 space-y-1.5 text-sm text-gray-600">
-              <p>Jl. Raya Cileungsi-Jonggo Km. 10, Cipeucang, Cileungsi, Bogor, Jawa Barat 16820</p>
-              <p>(0262) 123-4567</p>
+      <Card variant="glass">
+        <CardContent className="p-6">
+          <div className="flex items-start gap-6">
+            <img src="/logo.png" className="size-24 object-contain flex-shrink-0" alt="Logo Al-Hasaniyyah" />
+            <div>
+              <h3 className="text-xl font-bold text-primary">YAYASAN PENDIDIKAN ISLAM AL-HASANIYYAH</h3>
+              <div className="mt-4 space-y-1.5 text-sm text-muted-foreground">
+                <p>Jl. Raya Cileungsi-Jonggo Km. 10, Cipeucang, Cileungsi, Bogor, Jawa Barat 16820</p>
+                <p>(0262) 123-4567</p>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {loading ? (
           <>
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="animate-pulse bg-gray-200 rounded-xl h-32" />
-            ))}
+            <Skeleton className="h-28 rounded-xl" />
+            <Skeleton className="h-28 rounded-xl" />
+            <Skeleton className="h-28 rounded-xl" />
           </>
         ) : (
           <>
-            {/* Card 1: Siswa Aktif */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-[#E8F5EE] flex items-center justify-center shrink-0">
-                  <Users className="w-6 h-6 text-[#00A651]" />
+            <Card variant="glass">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="size-12 rounded-full bg-accent-light flex items-center justify-center shrink-0">
+                    <Users className="size-6 text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Siswa Aktif</p>
+                     <p className="text-2xl font-bold mt-1 tabular-nums">
+                      {stats?.totalSiswaAktif ?? 0}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Siswa Aktif</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">
-                    {stats?.totalSiswaAktif ?? 0}
-                  </p>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Card 2: Pembayar Bulan Ini */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-[#E8F5EE] flex items-center justify-center shrink-0">
-                  <CreditCard className="w-6 h-6 text-[#00A651]" />
+            <Card variant="glass">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="size-12 rounded-full bg-accent-light flex items-center justify-center shrink-0">
+                    <CreditCard className="size-6 text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Pembayar Bulan Ini</p>
+                     <p className="text-2xl font-bold mt-1 tabular-nums">
+                      {stats?.pembayarBulanIni ?? 0}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Pembayar Bulan Ini</p>
-                  <p className="text-3xl font-bold text-gray-900 mt-1">
-                    {stats?.pembayarBulanIni ?? 0}
-                  </p>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Card 3: Penerimaan Bulan Ini */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-[#E8F5EE] flex items-center justify-center shrink-0">
-                  <Banknote className="w-6 h-6 text-[#00A651]" />
+            <Card variant="glass">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="size-12 rounded-full bg-accent-light flex items-center justify-center shrink-0">
+                    <Banknote className="size-6 text-accent" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Penerimaan Bulan Ini</p>
+                     <p className="text-2xl font-bold text-accent mt-1 tabular-nums">
+                      {formatRupiah(stats?.penerimaanBulanIni ?? 0)}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Penerimaan Bulan Ini</p>
-                  <p className="text-3xl font-bold text-[#00A651] mt-1">
-                    {formatRupiah(stats?.penerimaanBulanIni ?? 0)}
-                  </p>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </>
         )}
       </div>
 
-      {/* Quick Action */}
-      <div>
-        <h2 className="text-base font-semibold text-gray-900 mb-3">Aksi Cepat</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button
-            onClick={() => navigate('/keuangan/transaksi/baru')}
-            className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 shadow-sm cursor-pointer hover:border-[#00A651] hover:shadow-md transition-all text-left"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#E8F5EE] flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-[#00A651]" />
+      <Card variant="glass">
+        <CardContent className="p-6">
+          <h2 className="text-base font-semibold mb-4">Aksi Cepat</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <button
+              onClick={() => navigate('/keuangan/transaksi/baru')}
+              className="w-full flex items-center justify-between p-4 bg-white/50 rounded-xl border border-gray-100 hover:border-accent hover:shadow-md transition-all text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="size-10 rounded-full bg-accent-light flex items-center justify-center">
+                  <CreditCard className="size-5 text-accent" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Transaksi Baru</p>
+                  <p className="text-xs text-muted-foreground">Catat pembayaran siswa</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-800">Transaksi Baru</p>
-                <p className="text-xs text-gray-500">Catat pembayaran siswa</p>
-              </div>
-            </div>
-            <ChevronRight className="w-5 h-5 text-gray-400" />
-          </button>
+              <ChevronRight className="size-5 text-muted-foreground" />
+            </button>
 
-          <button
-            onClick={() => navigate('/laporan/harian')}
-            className="w-full flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 shadow-sm cursor-pointer hover:border-[#00A651] hover:shadow-md transition-all text-left"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#E8F5EE] flex items-center justify-center">
-                <BarChart2 className="w-5 h-5 text-[#00A651]" />
+            <button
+              onClick={() => navigate('/laporan/harian')}
+              className="w-full flex items-center justify-between p-4 bg-white/50 rounded-xl border border-gray-100 hover:border-accent hover:shadow-md transition-all text-left"
+            >
+              <div className="flex items-center gap-3">
+                <div className="size-10 rounded-full bg-accent-light flex items-center justify-center">
+                  <BarChart2 className="size-5 text-accent" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">Lihat Laporan</p>
+                  <p className="text-xs text-muted-foreground">Laporan keuangan harian</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-800">Lihat Laporan</p>
-                <p className="text-xs text-gray-500">Laporan keuangan harian</p>
-              </div>
-            </div>
-            <ChevronRight className="w-5 h-5 text-gray-400" />
-          </button>
-        </div>
-      </div>
+              <ChevronRight className="size-5 text-muted-foreground" />
+            </button>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Tabel Riwayat Transaksi */}
-      <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Riwayat Transaksi Terbaru</h2>
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-50">
-                {['No. Transaksi', 'Nama Siswa', 'NIS', 'Nominal', 'Status', 'Tanggal'].map((col) => (
-                  <th
-                    key={col}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
+      <Card variant="glass">
+        <CardContent className="p-6">
+          <h2 className="text-lg font-semibold mb-4">Riwayat Transaksi Terbaru</h2>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>No. Transaksi</TableHead>
+                <TableHead>Nama Siswa</TableHead>
+                <TableHead>NIS</TableHead>
+                <TableHead>Nominal</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Tanggal</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {loading ? (
-                [0, 1, 2, 3, 4].map((i) => (
-                  <tr key={i}>
-                    <td colSpan={6} className="px-6 py-4">
-                      <div className="animate-pulse bg-gray-200 h-5 rounded" />
-                    </td>
-                  </tr>
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell colSpan={6}>
+                      <Skeleton className="h-5 w-full" />
+                    </TableCell>
+                  </TableRow>
                 ))
               ) : transactions.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-400">
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
                     Belum ada transaksi
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ) : (
                 transactions.map((tx) => (
-                  <tr key={tx.id} className="border-t border-gray-100 hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm text-gray-700 font-mono">{tx.transactionNumber}</td>
-                    <td className="px-6 py-4 text-sm text-gray-800 font-medium">{tx.studentName}</td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{tx.nis}</td>
-                    <td className="px-6 py-4 text-sm font-semibold text-[#00A651]">
+                  <TableRow key={tx.id}>
+                     <TableCell className="font-mono text-sm tabular-nums">{tx.transactionNumber}</TableCell>
+                    <TableCell className="font-medium">{tx.studentName}</TableCell>
+                    <TableCell className="text-muted-foreground">{tx.nis}</TableCell>
+                     <TableCell className="font-semibold text-accent tabular-nums">
                       {formatRupiah(tx.totalAmount)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <span
-                        className={
-                          tx.status === 'aktif'
-                            ? 'inline-flex px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800'
-                            : 'inline-flex px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800'
-                        }
-                      >
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={tx.status === 'aktif' ? 'success' : 'danger'}>
                         {tx.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">{formatTanggal(tx.createdAt)}</td>
-                  </tr>
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{formatTanggal(tx.createdAt)}</TableCell>
+                  </TableRow>
                 ))
               )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   )
 }

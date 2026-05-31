@@ -67,8 +67,7 @@ export default function ProfilPage() {
     }
   }
 
-  return (
-    <div className="p-6 max-w-2xl">
+  return (<div className="p-6 animate-fade-in-up max-w-2xl">
       <div className="mb-2">
         <h1 className="text-2xl font-bold text-gray-900">Profil Saya</h1>
         <p className="text-gray-500 mt-1">Informasi akun yang sedang login</p>
@@ -80,14 +79,14 @@ export default function ProfilPage() {
       {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm mb-6">{error}</div>}
 
       {loading ? (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-4">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow duration-200 space-y-4">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="animate-pulse bg-gray-200 h-6 rounded w-3/4" />
           ))}
         </div>
       ) : data && (
         <div className="space-y-4">
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow duration-200">
             <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
               <div>
                 <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</dt>
@@ -116,20 +115,20 @@ export default function ProfilPage() {
             </dl>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow duration-200">
             <h2 className="text-sm font-semibold text-gray-700 mb-3">Hak Akses ({data.permissions.length})</h2>
             {data.permissions.length === 0 ? (
               <p className="text-sm text-gray-400">Tidak ada permission</p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {data.permissions.map(p => (
-                  <span key={p} className="inline-flex px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-mono">{p}</span>
+                  <span key={p} className="inline-flex px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-mono tabular-nums">{p}</span>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow duration-200">
             <h2 className="text-sm font-semibold text-gray-700 mb-4">Ganti Password</h2>
             {pwSuccess && (
               <div className="bg-green-50 border border-green-200 text-green-700 rounded-lg p-3 text-sm mb-4">{pwSuccess}</div>
@@ -153,7 +152,7 @@ export default function ProfilPage() {
                 <Input id="confirmPassword" type="password" placeholder="Ulangi password baru" {...registerPw('confirmPassword')} />
                 {pwErrors.confirmPassword && <p className="text-sm text-red-500">{pwErrors.confirmPassword.message}</p>}
               </div>
-              <Button type="submit" className="bg-[#00A651] hover:bg-[#008C44]" disabled={pwSaving}>
+              <Button type="submit" className="bg-accent hover:bg-accent/90" disabled={pwSaving}>
                 {pwSaving ? 'Menyimpan...' : 'Ubah Password'}
               </Button>
             </form>

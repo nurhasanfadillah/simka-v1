@@ -135,14 +135,14 @@ export default function TahunPelajaranPage() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-2">
+    <div className="p-6 animate-fade-in-up">
+      <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Tahun Pelajaran</h1>
-          <p className="text-gray-500 mt-1">Kelola data tahun pelajaran</p>
+          <p className="text-muted-foreground mt-1">Kelola data tahun pelajaran</p>
         </div>
-        <Button className="bg-[#00A651] hover:bg-[#008C44]" onClick={openCreate}>
-          <Plus className="w-4 h-4 mr-2" />
+        <Button className="bg-accent hover:bg-accent/90" onClick={openCreate}>
+          <Plus className="size-4 mr-2" />
           Tambah Tahun
         </Button>
       </div>
@@ -156,7 +156,7 @@ export default function TahunPelajaranPage() {
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200">
         <table className="w-full">
           <thead>
             <tr className="bg-gray-50">
@@ -204,7 +204,7 @@ export default function TahunPelajaranPage() {
                   </td>
                   <td className="px-6 py-4 flex items-center gap-2">
                     <Button size="sm" variant="outline" onClick={() => openEdit(row)}>
-                      <Pencil className="w-3.5 h-3.5 mr-1" />
+                      <Pencil className="size-3.5 mr-1" />
                       Edit
                     </Button>
                     {!row.isActive && (
@@ -224,7 +224,7 @@ export default function TahunPelajaranPage() {
                       className="text-red-600 border-red-200 hover:bg-red-50"
                       onClick={() => { setError(null); setDeleteTarget(row) }}
                     >
-                      <Trash2 className="w-3.5 h-3.5 mr-1" />
+                      <Trash2 className="size-3.5 mr-1" />
                       Hapus
                     </Button>
                   </td>
@@ -265,7 +265,7 @@ export default function TahunPelajaranPage() {
               </Button>
               <Button
                 type="submit"
-                className="bg-[#00A651] hover:bg-[#008C44]"
+                className="bg-accent hover:bg-accent/90"
                 disabled={saving}
               >
                 {saving ? 'Menyimpan...' : 'Simpan'}
@@ -298,7 +298,7 @@ export default function TahunPelajaranPage() {
               Batal
             </Button>
             <Button
-              className="bg-red-600 hover:bg-red-700 text-white"
+              variant="destructive"
               disabled={deleting}
               onClick={handleDelete}
             >

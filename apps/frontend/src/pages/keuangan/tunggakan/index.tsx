@@ -11,7 +11,7 @@ const SummaryTable = ({ title, data }: { title: string; data: TunggakanSummaryGr
   const remainSum = data.reduce((s, r) => s + r.remaining, 0)
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div >
       <div className="px-4 py-3 bg-gray-50 border-b">
         <span className="font-medium text-gray-700 text-sm">{title}</span>
         <span className="ml-2 inline-flex px-2 py-0.5 rounded-full text-xs bg-gray-200 text-gray-600">{data.length}</span>
@@ -78,8 +78,7 @@ export default function TunggakanPage() {
 
   useEffect(() => { fetchData() }, [filterSchoolYearId])
 
-  return (
-    <div className="p-6">
+  return (<div className="p-6 animate-fade-in-up">
       <h1 className="text-2xl font-bold text-gray-900">Tunggakan</h1>
       <p className="text-gray-500 mt-1">Ringkasan tagihan dan tunggakan</p>
 
@@ -103,15 +102,15 @@ export default function TunggakanPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
               <p className="text-sm text-gray-500">Total Tagihan</p>
-              <p className="text-2xl font-bold text-gray-800 mt-1">{formatRupiah(data.totalTagihan)}</p>
+              <p className="tabular-nums text-2xl font-bold text-gray-800 mt-1">{formatRupiah(data.totalTagihan)}</p>
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
               <p className="text-sm text-gray-500">Total Pembayaran</p>
-              <p className="text-2xl font-bold text-blue-600 mt-1">{formatRupiah(data.totalPembayaran)}</p>
+              <p className="tabular-nums text-2xl font-bold text-blue-600 mt-1">{formatRupiah(data.totalPembayaran)}</p>
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-red-100 p-5 bg-red-50/30">
               <p className="text-sm text-red-500">Total Tunggakan</p>
-              <p className="text-2xl font-bold text-red-600 mt-1">{formatRupiah(data.totalTunggakan)}</p>
+              <p className="tabular-nums text-2xl font-bold text-red-600 mt-1">{formatRupiah(data.totalTunggakan)}</p>
             </div>
           </div>
 

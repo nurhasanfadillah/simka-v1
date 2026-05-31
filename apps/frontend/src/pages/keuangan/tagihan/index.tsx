@@ -5,6 +5,13 @@ import { apiClient } from '@/lib/api'
 import type { Bill, BillDetail, Class as _Class, SchoolYear, PaymentTemplate } from '@/types/master'
 import { Button } from '@/components/ui/button'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -91,9 +98,8 @@ export default function TagihanPage() {
     navigate(`/keuangan/transaksi/baru?studentId=${studentId}`)
   }
 
-  return (
-    <div className="p-6">
-      <div className="mb-2">
+  return (<div className="p-6 animate-fade-in-up">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Data Tagihan</h1>
         <p className="text-gray-500 mt-1">Daftar semua tagihan siswa</p>
       </div>
@@ -101,24 +107,40 @@ export default function TagihanPage() {
       {/* Filter Bar */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4">
         <div className="flex flex-wrap items-center gap-3">
-          <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 min-w-[160px]" value={filterSchoolYearId} onChange={(e) => setFilterSchoolYearId(e.target.value)}>
-            <option value="">Tahun Pelajaran</option>
-            {schoolYears.map((y) => (<option key={y.id} value={y.id}>{y.name}</option>))}
-          </select>
-          <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 min-w-[180px]" value={filterClassId} onChange={(e) => setFilterClassId(e.target.value)}>
-            <option value="">Semua Kelas</option>
-            {classes.map((c) => (<option key={c.id} value={c.id}>{c.name} — {c.unitName}</option>))}
-          </select>
-          <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 min-w-[200px]" value={filterPaymentTemplateId} onChange={(e) => setFilterPaymentTemplateId(e.target.value)}>
-            <option value="">Semua Pembayaran</option>
-            {paymentTemplates.map((p) => (<option key={p.id} value={p.id}>{p.name}</option>))}
-          </select>
-          <select className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 min-w-[160px]" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-            <option value="">Semua Status</option>
-            <option value="belum_bayar">Belum Bayar</option>
-            <option value="cicilan">Cicilan</option>
-            <option value="lunas">Lunas</option>
-          </select>
+          <Select value={filterSchoolYearId} onValueChange={setFilterSchoolYearId}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Tahun Pelajaran" />
+            </SelectTrigger>
+            <SelectContent>
+              {schoolYears.map((y) => (<SelectItem key={y.id} value={String(y.id)}>{y.name}</SelectItem>))}
+            </SelectContent>
+          </Select>
+          <Select value={filterClassId} onValueChange={setFilterClassId}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Semua Kelas" />
+            </SelectTrigger>
+            <SelectContent>
+              {classes.map((c) => (<SelectItem key={c.id} value={String(c.id)}>{c.name} — {c.unitName}</SelectItem>))}
+            </SelectContent>
+          </Select>
+          <Select value={filterPaymentTemplateId} onValueChange={setFilterPaymentTemplateId}>
+            <SelectTrigger className="w-[220px]">
+              <SelectValue placeholder="Semua Pembayaran" />
+            </SelectTrigger>
+            <SelectContent>
+              {paymentTemplates.map((p) => (<SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>))}
+            </SelectContent>
+          </Select>
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Semua Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="belum_bayar">Belum Bayar</SelectItem>
+              <SelectItem value="cicilan">Cicilan</SelectItem>
+              <SelectItem value="lunas">Lunas</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -130,10 +152,10 @@ export default function TagihanPage() {
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm mb-6">{error}</div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto hover:shadow-md transition-shadow duration-200">
+        <table>
           <thead>
-            <tr className="bg-gray-50">
+            <tr>
               {['NIS', 'Siswa', 'Kelas', 'Pembayaran', 'Nominal', 'Status', 'Aksi'].map((col) => (
                 <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
               ))}
@@ -142,18 +164,18 @@ export default function TagihanPage() {
           <tbody>
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i}><td colSpan={7} className="px-6 py-4"><div className="animate-pulse bg-gray-200 h-6 rounded" /></td></tr>
+                <tr key={i}><td colSpan={7} className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" /></td></tr>
               ))
             ) : data.length === 0 ? (
               <tr><td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-400">Belum ada data tagihan</td></tr>
             ) : (
               data.map((row) => (
                 <tr key={row.id} className="border-t border-gray-100 hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-500 font-mono">{row.nis}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 tabular-nums font-mono">{row.nis}</td>
                   <td className="px-6 py-4 text-sm text-gray-800 font-medium">{row.studentName}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{row.className}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{row.paymentPostName}</td>
-                  <td className="px-6 py-4 text-sm font-semibold text-[#00A651]">{formatRupiah(row.totalAmount)}</td>
+                  <td className="px-6 py-4 text-sm tabular-nums font-semibold text-accent">{formatRupiah(row.totalAmount)}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${STATUSES[row.status]?.className ?? 'bg-gray-100 text-gray-600'}`}>
                       {STATUSES[row.status]?.label ?? row.status}
@@ -161,11 +183,11 @@ export default function TagihanPage() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-1">
-                      <Button size="icon" variant="ghost" className="h-8 w-8 text-[#00A651]" title="Bayar" onClick={() => handleBayar(row.studentId)}>
-                        <CreditCard className="w-4 h-4" />
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-accent" title="Bayar" onClick={() => handleBayar(row.studentId)}>
+                        <CreditCard className="size-4" />
                       </Button>
                       <Button size="icon" variant="ghost" className="h-8 w-8 text-gray-500" title="Detail" onClick={() => openDetail(row)} disabled={loadingDetail}>
-                        <Eye className="w-4 h-4" />
+                        <Eye className="size-4" />
                       </Button>
                     </div>
                   </td>
@@ -183,11 +205,11 @@ export default function TagihanPage() {
           </DialogHeader>
           {detailModal && (
             <div className="space-y-4 pt-2">
-              <div className="grid grid-cols-2 gap-3 text-sm bg-gray-50 rounded-lg p-4">
+              <div className="grid grid-cols-2 gap-3 text-sm bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors duration-150">
                 <div><span className="text-gray-500">Kelas:</span> <span className="font-medium">{detailModal.className}</span></div>
                 <div><span className="text-gray-500">Pembayaran:</span> <span className="font-medium">{detailModal.paymentPostName}</span></div>
                 <div><span className="text-gray-500">Tahun:</span> <span className="font-medium">{detailModal.schoolYearName}</span></div>
-                <div><span className="text-gray-500">Total:</span> <span className="font-semibold text-[#00A651]">{formatRupiah(detailModal.totalAmount)}</span></div>
+                <div><span className="text-gray-500">Total:</span> <span className="tabular-nums font-semibold text-accent">{formatRupiah(detailModal.totalAmount)}</span></div>
                 <div className="col-span-2">
                   <span className="text-gray-500">Status:</span>{' '}
                   <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${STATUSES[detailModal.status]?.className ?? ''}`}>
@@ -199,9 +221,9 @@ export default function TagihanPage() {
               <div>
                 <h4 className="text-sm font-semibold text-gray-700 mb-2">Detail Bulan</h4>
                 <div className="border rounded-lg overflow-hidden">
-                  <table className="w-full text-sm">
+                  <table>
                     <thead>
-                      <tr className="bg-gray-50">
+                      <tr>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Bulan</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Tahun</th>
                         <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Nominal</th>

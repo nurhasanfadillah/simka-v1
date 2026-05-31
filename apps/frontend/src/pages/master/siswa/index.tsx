@@ -255,31 +255,30 @@ export default function SiswaPage() {
   const genderValue = watch('gender')
   const regStatusValue = watch('registrationStatus')
 
-  return (
-    <div className="p-6">
+  return (<div className="p-6 animate-fade-in-up">
       {/* Header */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Data Siswa</h1>
           <p className="text-gray-500 mt-1">Kelola data siswa per unit sekolah</p>
         </div>
         <div className="flex items-center gap-3">
-          <select
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-transparent"
-            value={selectedUnitId}
-            onChange={(e) => setSelectedUnitId(e.target.value)}
-          >
-            <option value="">Semua Unit</option>
-            {units.map((u) => (
-              <option key={u.id} value={u.id}>{u.name}</option>
-            ))}
-          </select>
-          <Button className="bg-[#00A651] hover:bg-[#008C44]" onClick={openCreate}>
-            <Plus className="w-4 h-4 mr-2" />
+          <Select value={selectedUnitId} onValueChange={setSelectedUnitId}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Semua Unit" />
+            </SelectTrigger>
+            <SelectContent>
+              {units.map((u) => (
+                <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button className="bg-accent hover:bg-accent/90" onClick={openCreate}>
+            <Plus className="size-4 mr-2" />
             Tambah Siswa
           </Button>
-          <Button variant="outline" className="border-[#00A651] text-[#00A651] hover:bg-[#00A651] hover:text-white" onClick={() => navigate('/master/siswa/import')}>
-            <Upload className="w-4 h-4 mr-2" />
+          <Button variant="outline" className="border-[#00A651] text-accent hover:bg-accent hover:text-white" onClick={() => navigate('/master/siswa/import')}>
+            <Upload className="size-4 mr-2" />
             Import Data
           </Button>
         </div>
@@ -296,10 +295,10 @@ export default function SiswaPage() {
       )}
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto hover:shadow-md transition-shadow duration-200">
+        <table>
           <thead>
-            <tr className="bg-gray-50">
+            <tr>
               {['NIS', 'Nama', 'Gender', 'Kelas Aktif', 'Unit', 'Status', 'Aksi'].map((col) => (
                 <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {col}
@@ -312,7 +311,7 @@ export default function SiswaPage() {
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i}>
                   <td colSpan={7} className="px-6 py-4">
-                    <div className="animate-pulse bg-gray-200 h-6 rounded" />
+                     <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" />
                   </td>
                 </tr>
               ))
@@ -338,21 +337,21 @@ export default function SiswaPage() {
                   <td className="px-6 py-4">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-                          <MoreVertical className="w-4 h-4" />
+                        <Button variant="ghost" size="sm" className="size-7 p-0">
+                          <MoreVertical className="size-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => navigate(`/master/siswa/${row.id}`)}>
-                          <Eye className="w-3.5 h-3.5 mr-2" />
+                          <Eye className="size-3.5 mr-2" />
                           Lihat Detail
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => openEdit(row)}>
-                          <Pencil className="w-3.5 h-3.5 mr-2" />
+                          <Pencil className="size-3.5 mr-2" />
                           Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => openEnroll(row)}>
-                          <GraduationCap className="w-3.5 h-3.5 mr-2" />
+                          <GraduationCap className="size-3.5 mr-2" />
                           Kelas
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -360,7 +359,7 @@ export default function SiswaPage() {
                           className="text-red-600 focus:text-red-600"
                           onClick={() => setDeleteTarget(row)}
                         >
-                          <Trash2 className="w-3.5 h-3.5 mr-2" />
+                          <Trash2 className="size-3.5 mr-2" />
                           Hapus
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -381,7 +380,7 @@ export default function SiswaPage() {
           <p className="text-sm text-gray-600 py-2">Hapus <strong>{deleteTarget?.name}</strong>? Tindakan ini tidak bisa dibatalkan.</p>
           <div className="flex justify-end gap-3 pt-2">
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>Batal</Button>
-            <Button className="bg-red-600 hover:bg-red-700 text-white" disabled={deleting} onClick={() => deleteTarget && handleDelete(deleteTarget.id)}>
+            <Button variant="destructive" disabled={deleting} onClick={() => deleteTarget && handleDelete(deleteTarget.id)}>
               {deleting ? 'Menghapus...' : 'Hapus'}
             </Button>
           </div>
@@ -505,7 +504,7 @@ export default function SiswaPage() {
               <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>
                 Batal
               </Button>
-              <Button type="submit" className="bg-[#00A651] hover:bg-[#008C44]" disabled={saving}>
+              <Button type="submit" className="bg-accent hover:bg-accent/90" disabled={saving}>
                 {saving ? 'Menyimpan...' : 'Simpan'}
               </Button>
             </div>
@@ -525,9 +524,9 @@ export default function SiswaPage() {
             <div>
               <h3 className="text-sm font-semibold text-gray-700 mb-2">Riwayat Kelas</h3>
               <div className="border rounded-lg overflow-hidden max-h-48 overflow-y-auto">
-                <table className="w-full text-sm">
+                <table>
                   <thead>
-                    <tr className="bg-gray-50">
+                    <tr>
                       <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Kelas</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Tingkat</th>
                       <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Unit</th>
@@ -603,7 +602,7 @@ export default function SiswaPage() {
               </div>
               <div className="flex justify-end mt-4">
                 <Button
-                  className="bg-[#00A651] hover:bg-[#008C44]"
+                  className="bg-accent hover:bg-accent/90"
                   onClick={handleEnroll}
                   disabled={!enrollClassId || !enrollYearId || enrollSaving}
                 >

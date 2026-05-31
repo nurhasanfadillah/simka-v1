@@ -126,15 +126,14 @@ export default function PengaturanRolesPage() {
     }
   }
 
-  return (
-    <div className="p-6">
+  return (<div className="p-6 animate-fade-in-up">
       <div className="flex items-center justify-between mb-2">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Role &amp; Akses</h1>
           <p className="text-gray-500 mt-1">Manajemen role dan hak akses pengguna</p>
         </div>
-        <Button className="bg-[#00A651] hover:bg-[#008C44]" onClick={openCreate}>
-          <Plus className="w-4 h-4 mr-2" />
+        <Button className="bg-accent hover:bg-accent/90" onClick={openCreate}>
+          <Plus className="size-4 mr-2" />
           Tambah Role
         </Button>
       </div>
@@ -148,10 +147,10 @@ export default function PengaturanRolesPage() {
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto hover:shadow-md transition-shadow duration-200">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-50">
+            <tr>
               {['Nama Role', 'Jumlah Permission', 'Aksi'].map(col => (
                 <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {col}
@@ -164,7 +163,7 @@ export default function PengaturanRolesPage() {
               Array.from({ length: 3 }).map((_, i) => (
                 <tr key={i}>
                   <td colSpan={3} className="px-6 py-4">
-                    <div className="animate-pulse bg-gray-200 h-6 rounded" />
+                    <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" />
                   </td>
                 </tr>
               ))
@@ -185,10 +184,10 @@ export default function PengaturanRolesPage() {
                   </td>
                   <td className="px-6 py-4 flex items-center gap-2">
                     <Button size="sm" variant="outline" onClick={() => openAssign(role)}>
-                      <ShieldCheck className="w-3.5 h-3.5 mr-1" />Atur Permission
+                      <ShieldCheck className="size-3.5 mr-1" />Atur Permission
                     </Button>
                     <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50" onClick={() => setDeleteTarget(role)}>
-                      <Trash2 className="w-3.5 h-3.5 mr-1" />Hapus
+                      <Trash2 className="size-3.5 mr-1" />Hapus
                     </Button>
                   </td>
                 </tr>
@@ -206,7 +205,7 @@ export default function PengaturanRolesPage() {
           <p className="text-sm text-gray-600 py-2">Hapus role <strong>{deleteTarget?.name}</strong>? Tindakan ini tidak bisa dibatalkan.</p>
           <div className="flex justify-end gap-3 pt-2">
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>Batal</Button>
-            <Button className="bg-red-600 hover:bg-red-700 text-white" disabled={deleting} onClick={() => deleteTarget && handleDelete(deleteTarget.id)}>
+            <Button variant="destructive" disabled={deleting} onClick={() => deleteTarget && handleDelete(deleteTarget.id)}>
               {deleting ? 'Menghapus...' : 'Hapus'}
             </Button>
           </div>
@@ -226,7 +225,7 @@ export default function PengaturanRolesPage() {
             </div>
             <div className="flex justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={() => setCreateOpen(false)}>Batal</Button>
-              <Button type="submit" className="bg-[#00A651] hover:bg-[#008C44]" disabled={saving}>
+              <Button type="submit" className="bg-accent hover:bg-accent/90" disabled={saving}>
                 {saving ? 'Menyimpan...' : 'Simpan'}
               </Button>
             </div>
@@ -254,11 +253,11 @@ export default function PengaturanRolesPage() {
                         e.target.checked ? next.add(p.id) : next.delete(p.id)
                         setCheckedIds(next)
                       }}
-                      className="w-4 h-4 accent-[#00A651]"
+                      className="size-4 accent-[#00A651]"
                     />
                     <div>
                       <span className="text-sm font-medium text-gray-800">{p.name}</span>
-                      <span className="ml-2 text-xs font-mono text-gray-400">{p.code}</span>
+                      <span className="ml-2 text-xs font-mono tabular-nums text-gray-400">{p.code}</span>
                     </div>
                   </label>
                 ))
@@ -266,7 +265,7 @@ export default function PengaturanRolesPage() {
             </div>
             <div className="flex justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={() => setAssignOpen(false)}>Batal</Button>
-              <Button type="button" className="bg-[#00A651] hover:bg-[#008C44]" disabled={saving} onClick={onSubmitAssign}>
+              <Button type="button" className="bg-accent hover:bg-accent/90" disabled={saving} onClick={onSubmitAssign}>
                 {saving ? 'Menyimpan...' : 'Simpan'}
               </Button>
             </div>

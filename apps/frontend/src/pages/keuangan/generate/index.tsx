@@ -217,9 +217,8 @@ export default function GeneratePembayaranPage() {
     return classes.filter((c) => String(c.schoolUnitId) === selectedUnitId)
   }, [classes, selectedUnitId])
 
-  return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-2">
+  return (<div className="p-6 animate-fade-in-up">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Generate Pembayaran</h1>
           <p className="text-gray-500 mt-1">Generate tagihan dari buku pembayaran yang sudah dibuat</p>
@@ -302,16 +301,16 @@ export default function GeneratePembayaranPage() {
             <div className="flex items-center gap-6 text-sm">
               <div><span className="text-gray-500">POS:</span>{' '}<span className="font-semibold">{template.paymentPostName}</span></div>
               <div><span className="text-gray-500">Tahun:</span>{' '}<span className="font-semibold">{template.schoolYearName}</span></div>
-              <div><span className="text-gray-500">Nominal:</span>{' '}<span className="font-semibold text-[#00A651]">{formatRupiah(template.amount)}</span></div>
+              <div><span className="text-gray-500">Nominal:</span>{' '}<span className="tabular-nums font-semibold text-accent">{formatRupiah(template.amount)}</span></div>
             </div>
           </div>
 
           <div className="mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">Siswa dengan Tagihan ({withBills.length})</h2>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <table className="w-full">
+            <div >
+              <table>
                 <thead>
-                  <tr className="bg-gray-50">
+                  <tr>
                     {['NIS', 'Nama', 'Kelas', 'Nominal', 'Status', 'Aksi'].map((col) => (
                       <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
                     ))}
@@ -320,7 +319,7 @@ export default function GeneratePembayaranPage() {
                 <tbody>
                   {loading ? (
                     Array.from({ length: 3 }).map((_, i) => (
-                      <tr key={i}><td colSpan={6} className="px-6 py-4"><div className="animate-pulse bg-gray-200 h-6 rounded" /></td></tr>
+                      <tr key={i}><td colSpan={6} className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" /></td></tr>
                     ))
                   ) : withBills.length === 0 ? (
                     <tr><td colSpan={6} className="px-6 py-8 text-center text-sm text-gray-400">Tidak ada siswa dengan tagihan</td></tr>
@@ -348,10 +347,10 @@ export default function GeneratePembayaranPage() {
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-1">
                             <Button size="sm" variant="outline" onClick={() => { editBillForm.reset({ amount: row.amount }); setEditBillTarget(row) }}>
-                              <Pencil className="w-3 h-3 mr-1" />Edit
+                              <Pencil className="size-3 mr-1" />Edit
                             </Button>
                             <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50" onClick={() => setDeleteBillTarget(row)}>
-                              <Trash2 className="w-3 h-3 mr-1" />Hapus
+                              <Trash2 className="size-3 mr-1" />Hapus
                             </Button>
                           </div>
                         </td>
@@ -365,10 +364,10 @@ export default function GeneratePembayaranPage() {
 
           <div className="mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">Siswa tanpa Tagihan ({withoutBills.length})</h2>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <table className="w-full">
+            <div >
+              <table>
                 <thead>
-                  <tr className="bg-gray-50">
+                  <tr>
                     <th className="px-6 py-3 w-10">
                       <input type="checkbox" className="rounded" checked={withoutBills.length > 0 && checkedIds.size === withoutBills.length} onChange={toggleAll} />
                     </th>
@@ -380,7 +379,7 @@ export default function GeneratePembayaranPage() {
                 <tbody>
                   {loading ? (
                     Array.from({ length: 3 }).map((_, i) => (
-                      <tr key={i}><td colSpan={5} className="px-6 py-4"><div className="animate-pulse bg-gray-200 h-6 rounded" /></td></tr>
+                      <tr key={i}><td colSpan={5} className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" /></td></tr>
                     ))
                   ) : withoutBills.length === 0 ? (
                     <tr><td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400">Semua siswa sudah memiliki tagihan</td></tr>
@@ -404,8 +403,8 @@ export default function GeneratePembayaranPage() {
               </table>
             </div>
             <div className="mt-3 flex justify-end">
-              <Button className="bg-[#00A651] hover:bg-[#008C44]" disabled={checkedIds.size === 0 || saving} onClick={() => setCreatePreviewOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />Buat Tagihan ({checkedIds.size})
+              <Button className="bg-accent hover:bg-accent/90" disabled={checkedIds.size === 0 || saving} onClick={() => setCreatePreviewOpen(true)}>
+                <Plus className="size-4 mr-2" />Buat Tagihan ({checkedIds.size})
               </Button>
             </div>
           </div>
@@ -433,7 +432,7 @@ export default function GeneratePembayaranPage() {
             </div>
             <div className="flex justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={() => setEditBillTarget(null)}>Batal</Button>
-              <Button type="submit" className="bg-[#00A651] hover:bg-[#008C44]" disabled={saving}>{saving ? 'Menyimpan...' : 'Simpan'}</Button>
+              <Button type="submit" className="bg-accent hover:bg-accent/90" disabled={saving}>{saving ? 'Menyimpan...' : 'Simpan'}</Button>
             </div>
           </form>
         </DialogContent>
@@ -451,7 +450,7 @@ export default function GeneratePembayaranPage() {
           <p className="text-sm text-gray-600">Tagihan yang sudah memiliki transaksi tidak dapat dihapus.</p>
           <div className="flex justify-end gap-3 pt-2">
             <Button variant="outline" onClick={() => setDeleteBillTarget(null)}>Batal</Button>
-            <Button className="bg-red-600 hover:bg-red-700 text-white" disabled={saving} onClick={handleDeleteBill}>{saving ? 'Menghapus...' : 'Hapus'}</Button>
+            <Button variant="destructive" disabled={saving} onClick={handleDeleteBill}>{saving ? 'Menghapus...' : 'Hapus'}</Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -470,7 +469,7 @@ export default function GeneratePembayaranPage() {
           </div>
           <div className="flex justify-end gap-3 pt-4">
             <Button variant="outline" onClick={() => setCreatePreviewOpen(false)}>Batal</Button>
-            <Button className="bg-[#00A651] hover:bg-[#008C44]" disabled={saving} onClick={handleCreateBills}>{saving ? 'Membuat...' : 'Konfirmasi'}</Button>
+            <Button className="bg-accent hover:bg-accent/90" disabled={saving} onClick={handleCreateBills}>{saving ? 'Membuat...' : 'Konfirmasi'}</Button>
           </div>
         </DialogContent>
       </Dialog>

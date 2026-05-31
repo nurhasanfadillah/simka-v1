@@ -154,26 +154,25 @@ export default function ManajemenPembayaranPage() {
   const postValue = watch('paymentPostId')
   const yearValue = watch('schoolYearId')
 
-  return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-2">
+  return (<div className="p-6 animate-fade-in-up">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Pembayaran</h1>
           <p className="text-gray-500 mt-1">Kelola buku pembayaran per pos dan tahun ajaran</p>
         </div>
         <div className="flex items-center gap-3">
-          <select
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-transparent"
-            value={filterYearId}
-            onChange={(e) => setFilterYearId(e.target.value)}
-          >
-            <option value="">Semua Tahun</option>
-            {schoolYears.map((y) => (
-              <option key={y.id} value={y.id}>{y.name}</option>
-            ))}
-          </select>
-          <Button className="bg-[#00A651] hover:bg-[#008C44]" onClick={openCreate}>
-            <Plus className="w-4 h-4 mr-2" />Tambah Buku
+          <Select value={filterYearId} onValueChange={setFilterYearId}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Semua Tahun" />
+            </SelectTrigger>
+            <SelectContent>
+              {schoolYears.map((y) => (
+                <SelectItem key={y.id} value={String(y.id)}>{y.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button className="bg-accent hover:bg-accent/90" onClick={openCreate}>
+            <Plus className="size-4 mr-2" />Tambah Buku
           </Button>
         </div>
       </div>
@@ -185,10 +184,10 @@ export default function ManajemenPembayaranPage() {
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm mb-6">{error}</div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto hover:shadow-md transition-shadow duration-200">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-50">
+            <tr>
               {['Nama', 'POS', 'Tahun Ajaran', 'Nominal', 'Aksi'].map((col) => (
                 <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
               ))}
@@ -197,7 +196,7 @@ export default function ManajemenPembayaranPage() {
           <tbody>
             {loading ? (
               Array.from({ length: 3 }).map((_, i) => (
-                <tr key={i}><td colSpan={5} className="px-6 py-4"><div className="animate-pulse bg-gray-200 h-6 rounded" /></td></tr>
+                <tr key={i}><td colSpan={5} className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" /></td></tr>
               ))
             ) : data.length === 0 ? (
               <tr><td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400">Belum ada buku pembayaran</td></tr>
@@ -207,13 +206,13 @@ export default function ManajemenPembayaranPage() {
                   <td className="px-6 py-4 text-sm text-gray-800 font-medium">{row.name}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{row.paymentPostName}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{row.schoolYearName}</td>
-                  <td className="px-6 py-4 text-sm font-semibold text-[#00A651]">{formatRupiah(row.amount)}</td>
+                  <td className="px-6 py-4 text-sm font-semibold text-accent tabular-nums">{formatRupiah(row.amount)}</td>
                   <td className="px-6 py-4 flex items-center gap-2">
                     <Button size="sm" variant="outline" onClick={() => openEdit(row)}>
-                      <Pencil className="w-3.5 h-3.5 mr-1" />Edit
+                      <Pencil className="size-3.5 mr-1" />Edit
                     </Button>
                     <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50" onClick={() => setDeleteTarget(row)}>
-                      <Trash2 className="w-3.5 h-3.5 mr-1" />Hapus
+                      <Trash2 className="size-3.5 mr-1" />Hapus
                     </Button>
                   </td>
                 </tr>
@@ -231,7 +230,7 @@ export default function ManajemenPembayaranPage() {
           <p className="text-sm text-gray-600 py-2">Hapus buku <strong>{deleteTarget?.paymentPostName} — {deleteTarget?.schoolYearName}</strong>? Buku yang sudah memiliki tagihan tidak dapat dihapus.</p>
           <div className="flex justify-end gap-3 pt-2">
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>Batal</Button>
-            <Button className="bg-red-600 hover:bg-red-700 text-white" disabled={deleting} onClick={() => deleteTarget && handleDelete(deleteTarget.id)}>
+            <Button variant="destructive" disabled={deleting} onClick={() => deleteTarget && handleDelete(deleteTarget.id)}>
               {deleting ? 'Menghapus...' : 'Hapus'}
             </Button>
           </div>
@@ -280,7 +279,7 @@ export default function ManajemenPembayaranPage() {
             </div>
             <div className="flex justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>Batal</Button>
-              <Button type="submit" className="bg-[#00A651] hover:bg-[#008C44]" disabled={saving}>
+              <Button type="submit" className="bg-accent hover:bg-accent/90" disabled={saving}>
                 {saving ? 'Menyimpan...' : 'Simpan'}
               </Button>
             </div>

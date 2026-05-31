@@ -4,6 +4,13 @@ import { Upload, Download, FileSpreadsheet, CheckCircle, XCircle, ArrowLeft } fr
 import { apiClient } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import type { ImportPreviewRow, ImportCommitResponse } from '@/types/master'
 
 const YEAR_OPTIONS = Array.from({ length: 31 }, (_, i) => 2000 + i)
@@ -75,7 +82,7 @@ export default function SiswaImportPage() {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" onClick={() => navigate('/master/siswa')}>
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="size-5" />
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Import Data Siswa</h1>
@@ -96,23 +103,24 @@ export default function SiswaImportPage() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Tahun Masuk *</Label>
-              <select
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-transparent"
-                value={entryYear}
-                onChange={(e) => setEntryYear(Number(e.target.value))}
-              >
-                {YEAR_OPTIONS.map((y) => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
+              <Select value={String(entryYear)} onValueChange={(v) => setEntryYear(Number(v))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih tahun" />
+                </SelectTrigger>
+                <SelectContent>
+                  {YEAR_OPTIONS.map((y) => (
+                    <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex items-end">
               <Button
                 variant="outline"
-                className="border-[#00A651] text-[#00A651] hover:bg-[#00A651] hover:text-white"
+                className="border-[#00A651] text-accent hover:bg-accent hover:text-white"
                 onClick={() => window.open('/api/master/students/template', '_blank')}
               >
-                <Download className="w-4 h-4 mr-2" />
+                <Download className="size-4 mr-2" />
                 Download Template
               </Button>
             </div>
@@ -129,7 +137,7 @@ export default function SiswaImportPage() {
               className="hidden"
               onChange={handleFileChange}
             />
-            <FileSpreadsheet className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+            <FileSpreadsheet className="size-10 text-gray-400 mx-auto mb-3" />
             <p className="text-sm text-gray-600">
               {file ? file.name : 'Klik untuk memilih file .xlsx'}
             </p>
@@ -141,7 +149,7 @@ export default function SiswaImportPage() {
           </div>
 
           <Button
-            className="w-full bg-[#00A651] hover:bg-[#008C44]"
+            className="w-full bg-accent hover:bg-accent/90"
             disabled={!file || loading !== 'idle'}
             onClick={handleUpload}
           >
@@ -149,7 +157,7 @@ export default function SiswaImportPage() {
               <>Memproses...</>
             ) : (
               <>
-                <Upload className="w-4 h-4 mr-2" />
+                <Upload className="size-4 mr-2" />
                 Upload & Preview
               </>
             )}
@@ -162,16 +170,16 @@ export default function SiswaImportPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center gap-1 text-sm font-medium text-green-700 bg-green-50 px-3 py-1 rounded-full">
-                <CheckCircle className="w-4 h-4" /> {validCount} Valid
+                <CheckCircle className="size-4" /> {validCount} Valid
               </span>
               {errorCount > 0 && (
                 <span className="inline-flex items-center gap-1 text-sm font-medium text-red-700 bg-red-50 px-3 py-1 rounded-full">
-                  <XCircle className="w-4 h-4" /> {errorCount} Gagal
+                  <XCircle className="size-4" /> {errorCount} Gagal
                 </span>
               )}
             </div>
             <Button
-              className="bg-[#00A651] hover:bg-[#008C44]"
+              className="bg-accent hover:bg-accent/90"
               disabled={validCount === 0 || loading !== 'idle'}
               onClick={handleCommit}
             >
@@ -181,7 +189,7 @@ export default function SiswaImportPage() {
 
           <div className="border border-gray-200 rounded-xl overflow-hidden max-h-[500px] overflow-y-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 sticky top-0">
+              <thead>
                 <tr>
                   <th className="px-4 py-2.5 text-left font-medium text-gray-600">#</th>
                   <th className="px-4 py-2.5 text-left font-medium text-gray-600">Nama</th>
@@ -207,11 +215,11 @@ export default function SiswaImportPage() {
                     <td className="px-4 py-2.5">
                       {row.status === 'valid' ? (
                         <span className="inline-flex items-center gap-1 text-green-700 font-medium">
-                          <CheckCircle className="w-4 h-4" /> Valid
+                          <CheckCircle className="size-4" /> Valid
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 text-red-600 font-medium" title={row.errors?.join(', ')}>
-                          <XCircle className="w-4 h-4" /> {row.errors?.join(', ')}
+                          <XCircle className="size-4" /> {row.errors?.join(', ')}
                         </span>
                       )}
                     </td>
@@ -225,7 +233,7 @@ export default function SiswaImportPage() {
 
       {result && (
         <div className="bg-white border border-green-200 rounded-xl p-8 text-center space-y-4">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
+          <CheckCircle className="size-16 text-green-500 mx-auto" />
           <h2 className="text-xl font-bold text-gray-900">Import Selesai</h2>
           <p className="text-gray-600">
             Berhasil mengimpor <span className="font-bold text-green-700">{result.success}</span> siswa
@@ -234,7 +242,7 @@ export default function SiswaImportPage() {
             )}
           </p>
           <Button
-            className="bg-[#00A651] hover:bg-[#008C44]"
+            className="bg-accent hover:bg-accent/90"
             onClick={() => navigate('/master/siswa')}
           >
             Kembali ke Data Siswa

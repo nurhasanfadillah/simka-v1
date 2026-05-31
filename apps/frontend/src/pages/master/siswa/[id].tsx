@@ -36,27 +36,26 @@ export default function SiswaDetailPage() {
       .finally(() => setLoading(false))
   }, [id])
 
-  if (loading) return <div className="p-6">Memuat...</div>
-  if (error || !student) return <div className="p-6 text-red-600">{error ?? 'Siswa tidak ditemukan'}</div>
+  if (loading) return <div className="p-6 animate-fade-in-up">Memuat...</div>
+  if (error || !student) return <div className="p-6 animate-fade-in-up text-red-600">{error ?? 'Siswa tidak ditemukan'}</div>
 
-  return (
-    <div className="p-6 space-y-6">
+  return (<div className="p-6 animate-fade-in-up space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={() => navigate('/master/siswa')}>
-            <ArrowLeft className="w-4 h-4 mr-1" />
+            <ArrowLeft className="size-4 mr-1" />
             Kembali
           </Button>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{student.name}</h1>
-            <p className="text-sm text-gray-500 font-mono">NIS: {student.nis}</p>
+            <p className="text-sm text-gray-500 font-mono tabular-nums">NIS: {student.nis}</p>
           </div>
         </div>
         <Button
-          className="bg-[#00A651] hover:bg-[#008C44]"
+          className="bg-accent hover:bg-accent/90"
           onClick={() => navigate('/master/siswa')}
         >
-          <Pencil className="w-4 h-4 mr-2" />
+          <Pencil className="size-4 mr-2" />
           Edit di Daftar
         </Button>
       </div>
@@ -93,12 +92,12 @@ export default function SiswaDetailPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto hover:shadow-md transition-shadow duration-200">
         <div className="p-5 border-b border-gray-100">
           <h3 className="text-sm font-semibold text-gray-700">Riwayat Kelas</h3>
         </div>
         <table className="w-full text-sm">
-          <thead className="bg-gray-50">
+          <thead>
             <tr>
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Kelas</th>
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tingkat</th>

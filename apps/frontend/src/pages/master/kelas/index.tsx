@@ -251,9 +251,8 @@ export default function KelasPage() {
   const selectedUnitValue = classForm.watch('schoolUnitId')
 
   // ── Render ────────────────────────────────────────────────────────────────
-  return (
-    <div className="p-6">
-      <div className="mb-2">
+  return (<div className="p-6 animate-fade-in-up">
+      <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Manajemen Kelas</h1>
         <p className="text-gray-500 mt-1">Kelola data kelas dan unit sekolah</p>
       </div>
@@ -269,7 +268,7 @@ export default function KelasPage() {
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab
-                ? 'border-[#00A651] text-[#00A651]'
+                ? 'border-[#00A651] text-accent'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -282,18 +281,18 @@ export default function KelasPage() {
       {activeTab === 'kelas' && (
         <>
           <div className="flex items-center justify-between mb-4">
-            <select
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-transparent"
-              value={selectedUnitId}
-              onChange={(e) => setSelectedUnitId(e.target.value)}
-            >
-              <option value="">Semua Unit</option>
-              {units.map((u) => (
-                <option key={u.id} value={u.id}>{u.name}</option>
-              ))}
-            </select>
-            <Button className="bg-[#00A651] hover:bg-[#008C44]" onClick={openCreateClass}>
-              <Plus className="w-4 h-4 mr-2" />
+            <Select value={selectedUnitId} onValueChange={setSelectedUnitId}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Semua Unit" />
+              </SelectTrigger>
+              <SelectContent>
+                {units.map((u) => (
+                  <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button className="bg-accent hover:bg-accent/90" onClick={openCreateClass}>
+              <Plus className="size-4 mr-2" />
               Tambah Kelas
             </Button>
           </div>
@@ -304,10 +303,10 @@ export default function KelasPage() {
             </div>
           )}
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto hover:shadow-md transition-shadow duration-200">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50">
+                <tr>
                   {['Nama Kelas', 'Tingkat', 'Unit Sekolah', 'Jumlah Siswa', 'Aksi'].map((col) => (
                     <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {col}
@@ -318,7 +317,7 @@ export default function KelasPage() {
               <tbody>
                 {classesLoading ? (
                   Array.from({ length: 3 }).map((_, i) => (
-                    <tr key={i}><td colSpan={5} className="px-6 py-4"><div className="animate-pulse bg-gray-200 h-6 rounded" /></td></tr>
+                     <tr key={i}><td colSpan={5} className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" /></td></tr>
                   ))
                 ) : classes.length === 0 ? (
                   <tr><td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400">Belum ada data kelas</td></tr>
@@ -335,14 +334,14 @@ export default function KelasPage() {
                       <td className="px-6 py-4 text-sm text-gray-600">{row.studentCount ?? 0}</td>
                       <td className="px-6 py-4 flex items-center gap-2">
                         <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); openEditClass(row) }}>
-                          <Pencil className="w-3.5 h-3.5 mr-1" />Edit
+                          <Pencil className="size-3.5 mr-1" />Edit
                         </Button>
                         <Button
                           size="sm" variant="outline"
                           className="text-red-600 border-red-200 hover:bg-red-50"
                           onClick={(e) => { e.stopPropagation(); setClassError(null); setDeleteClassTarget(row) }}
                         >
-                          <Trash2 className="w-3.5 h-3.5 mr-1" />Hapus
+                          <Trash2 className="size-3.5 mr-1" />Hapus
                         </Button>
                       </td>
                     </tr>
@@ -392,7 +391,7 @@ export default function KelasPage() {
                 </div>
                 <div className="flex justify-end gap-3 pt-4">
                   <Button type="button" variant="outline" onClick={() => setClassModalOpen(false)}>Batal</Button>
-                  <Button type="submit" className="bg-[#00A651] hover:bg-[#008C44]" disabled={savingClass}>
+                  <Button type="submit" className="bg-accent hover:bg-accent/90" disabled={savingClass}>
                     {savingClass ? 'Menyimpan...' : 'Simpan'}
                   </Button>
                 </div>
@@ -410,7 +409,7 @@ export default function KelasPage() {
               {classError && <p className="text-sm text-red-600">{classError}</p>}
               <div className="flex justify-end gap-3 pt-2">
                 <Button variant="outline" onClick={() => { setDeleteClassTarget(null); setClassError(null) }}>Batal</Button>
-                <Button className="bg-red-600 hover:bg-red-700 text-white" disabled={deletingClass} onClick={handleDeleteClass}>
+                <Button variant="destructive" disabled={deletingClass} onClick={handleDeleteClass}>
                   {deletingClass ? 'Menghapus...' : 'Hapus'}
                 </Button>
               </div>
@@ -452,9 +451,9 @@ export default function KelasPage() {
                 ) : classMembers.length === 0 ? (
                   <p className="text-sm text-gray-400 py-4 text-center">Tidak ada siswa di kelas ini</p>
                 ) : (
-                  <table className="w-full text-sm">
+                  <table>
                     <thead>
-                      <tr className="bg-gray-50 border-b">
+                      <tr>
                         <th className="text-left px-4 py-2 font-medium text-gray-600">NIS</th>
                         <th className="text-left px-4 py-2 font-medium text-gray-600">Nama</th>
                         <th className="text-left px-4 py-2 font-medium text-gray-600">JK</th>
@@ -482,8 +481,8 @@ export default function KelasPage() {
         <>
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-gray-500">{units.length} unit sekolah terdaftar</span>
-            <Button className="bg-[#00A651] hover:bg-[#008C44]" onClick={openCreateUnit}>
-              <Plus className="w-4 h-4 mr-2" />
+            <Button className="bg-accent hover:bg-accent/90" onClick={openCreateUnit}>
+              <Plus className="size-4 mr-2" />
               Tambah Unit
             </Button>
           </div>
@@ -494,10 +493,10 @@ export default function KelasPage() {
             </div>
           )}
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto hover:shadow-md transition-shadow duration-200">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50">
+                <tr>
                   {['Nama Unit', 'Kode', 'Jumlah Kelas', 'Aksi'].map((col) => (
                     <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       {col}
@@ -508,7 +507,7 @@ export default function KelasPage() {
               <tbody>
                 {unitsLoading ? (
                   Array.from({ length: 3 }).map((_, i) => (
-                    <tr key={i}><td colSpan={4} className="px-6 py-4"><div className="animate-pulse bg-gray-200 h-6 rounded" /></td></tr>
+                     <tr key={i}><td colSpan={4} className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" /></td></tr>
                   ))
                 ) : units.length === 0 ? (
                   <tr><td colSpan={4} className="px-6 py-8 text-center text-sm text-gray-400">Belum ada data unit sekolah</td></tr>
@@ -520,14 +519,14 @@ export default function KelasPage() {
                       <td className="px-6 py-4 text-sm text-gray-600">{row.classCount}</td>
                       <td className="px-6 py-4 flex items-center gap-2">
                         <Button size="sm" variant="outline" onClick={() => openEditUnit(row)}>
-                          <Pencil className="w-3.5 h-3.5 mr-1" />Edit
+                          <Pencil className="size-3.5 mr-1" />Edit
                         </Button>
                         <Button
                           size="sm" variant="outline"
                           className="text-red-600 border-red-200 hover:bg-red-50"
                           onClick={() => { setUnitError(null); setDeleteUnitTarget(row) }}
                         >
-                          <Trash2 className="w-3.5 h-3.5 mr-1" />Hapus
+                          <Trash2 className="size-3.5 mr-1" />Hapus
                         </Button>
                       </td>
                     </tr>
@@ -557,7 +556,7 @@ export default function KelasPage() {
                 {unitError && <p className="text-sm text-red-600">{unitError}</p>}
                 <div className="flex justify-end gap-3 pt-4">
                   <Button type="button" variant="outline" onClick={() => { setUnitModalOpen(false); setUnitError(null) }}>Batal</Button>
-                  <Button type="submit" className="bg-[#00A651] hover:bg-[#008C44]" disabled={savingUnit}>
+                  <Button type="submit" className="bg-accent hover:bg-accent/90" disabled={savingUnit}>
                     {savingUnit ? 'Menyimpan...' : 'Simpan'}
                   </Button>
                 </div>
@@ -575,7 +574,7 @@ export default function KelasPage() {
               {unitError && <p className="text-sm text-red-600">{unitError}</p>}
               <div className="flex justify-end gap-3 pt-2">
                 <Button variant="outline" onClick={() => { setDeleteUnitTarget(null); setUnitError(null) }}>Batal</Button>
-                <Button className="bg-red-600 hover:bg-red-700 text-white" disabled={deletingUnit} onClick={handleDeleteUnit}>
+                <Button variant="destructive" disabled={deletingUnit} onClick={handleDeleteUnit}>
                   {deletingUnit ? 'Menghapus...' : 'Hapus'}
                 </Button>
               </div>

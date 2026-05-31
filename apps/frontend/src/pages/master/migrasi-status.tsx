@@ -137,8 +137,7 @@ export default function MigrasiStatusPage() {
 
   const summary = preview ? getConfirmSummary() : { naik: 0, tinggal: 0, lulus: 0, keluar: 0, pindah: 0, tunggakanCount: 0 }
 
-  return (
-    <div className="p-6 space-y-6">
+  return (<div className="p-6 animate-fade-in-up space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Migrasi Status</h1>
         <p className="text-gray-500 mt-1">Kelola status akademik siswa — naik kelas, lulus, keluar, atau pindah</p>
@@ -156,7 +155,7 @@ export default function MigrasiStatusPage() {
       )}
 
       {/* Filter section */}
-      <div className="bg-white rounded-lg border p-4">
+      <div className="bg-white rounded-xl border p-4">
         <h2 className="font-medium text-gray-700 mb-4">Parameter Kenaikan Kelas</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-1">
@@ -238,7 +237,7 @@ export default function MigrasiStatusPage() {
 
       {/* Preview table */}
       {preview && preview.students.length > 0 && (
-        <div className="bg-white rounded-lg border">
+        <div className="bg-white rounded-xl border">
           <div className="px-5 py-4 border-b flex items-center justify-between">
             <div>
               <h2 className="font-medium text-gray-800">
@@ -282,7 +281,7 @@ export default function MigrasiStatusPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b">
+                <tr>
                   <th className="text-left px-4 py-2 font-medium text-gray-600">NIS</th>
                   <th className="text-left px-4 py-2 font-medium text-gray-600">Nama</th>
                   <th className="text-left px-4 py-2 font-medium text-gray-600">JK</th>
@@ -296,7 +295,7 @@ export default function MigrasiStatusPage() {
                   const sa = studentActions[s.studentId] ?? { action: 'naik' as const }
                   return (
                     <tr key={s.studentId} className="border-b last:border-0 hover:bg-gray-50">
-                      <td className="px-4 py-2 font-mono text-xs">{s.nis}</td>
+                      <td className="px-4 py-2 font-mono tabular-nums text-xs">{s.nis}</td>
                       <td className="px-4 py-2">{s.name}</td>
                       <td className="px-4 py-2 text-gray-500">{s.gender === 'L' ? 'L' : 'P'}</td>
                       <td className="px-4 py-2">
@@ -368,7 +367,7 @@ export default function MigrasiStatusPage() {
             <Button
               onClick={() => setConfirmOpen(true)}
               disabled={!toYearId}
-              className="bg-[#00A651] hover:bg-[#008c44] text-white"
+              className="bg-accent hover:bg-accent/90 text-white"
             >
               Proses Migrasi
             </Button>
@@ -383,7 +382,7 @@ export default function MigrasiStatusPage() {
 
       {/* Empty state */}
       {preview && preview.students.length === 0 && (
-        <div className="bg-white rounded-lg border px-5 py-10 text-center text-sm text-gray-400">
+        <div className="bg-white rounded-xl border px-5 py-10 text-center text-sm text-gray-400">
           Tidak ada siswa di kelas dan tahun ajaran yang dipilih.
         </div>
       )}
@@ -397,23 +396,23 @@ export default function MigrasiStatusPage() {
               <div className="space-y-3 pt-2">
                 <div className="grid grid-cols-5 gap-3 text-center">
                   <div className="bg-green-50 rounded-lg p-3">
-                    <p className="text-2xl font-bold text-green-700">{summary.naik}</p>
+                    <p className="text-2xl font-bold tabular-nums text-green-700">{summary.naik}</p>
                     <p className="text-xs text-green-600">Naik</p>
                   </div>
                   <div className="bg-amber-50 rounded-lg p-3">
-                    <p className="text-2xl font-bold text-amber-700">{summary.tinggal}</p>
+                    <p className="text-2xl font-bold tabular-nums text-amber-700">{summary.tinggal}</p>
                     <p className="text-xs text-amber-600">Tinggal</p>
                   </div>
                   <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-2xl font-bold text-blue-700">{summary.lulus}</p>
+                    <p className="text-2xl font-bold tabular-nums text-blue-700">{summary.lulus}</p>
                     <p className="text-xs text-blue-600">Lulus</p>
                   </div>
                   <div className="bg-red-50 rounded-lg p-3">
-                    <p className="text-2xl font-bold text-red-700">{summary.keluar}</p>
+                    <p className="text-2xl font-bold tabular-nums text-red-700">{summary.keluar}</p>
                     <p className="text-xs text-red-600">Keluar</p>
                   </div>
                   <div className="bg-orange-50 rounded-lg p-3">
-                    <p className="text-2xl font-bold text-orange-700">{summary.pindah}</p>
+                    <p className="text-2xl font-bold tabular-nums text-orange-700">{summary.pindah}</p>
                     <p className="text-xs text-orange-600">Pindah</p>
                   </div>
                 </div>
@@ -437,7 +436,7 @@ export default function MigrasiStatusPage() {
             <Button
               onClick={handleConfirm}
               disabled={loadingSubmit}
-              className="bg-[#00A651] hover:bg-[#008c44] text-white"
+              className="bg-accent hover:bg-accent/90 text-white"
             >
               {loadingSubmit ? 'Memproses...' : 'Konfirmasi'}
             </Button>
@@ -447,31 +446,31 @@ export default function MigrasiStatusPage() {
 
       {/* Hasil proses */}
       {result && (
-        <div className="bg-white rounded-lg border p-5 space-y-4">
+        <div className="bg-white rounded-xl border p-5 space-y-4">
           <h2 className="font-medium text-gray-800">Hasil Proses Migrasi Status</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 text-center">
             <div className="bg-gray-50 rounded-lg p-3">
-              <p className="text-xl font-bold text-gray-700">{result.processed}</p>
+              <p className="text-xl font-bold tabular-nums text-gray-700">{result.processed}</p>
               <p className="text-xs text-gray-500">Diproses</p>
             </div>
             <div className="bg-green-50 rounded-lg p-3">
-              <p className="text-xl font-bold text-green-700">{result.naik}</p>
+              <p className="text-xl font-bold tabular-nums text-green-700">{result.naik}</p>
               <p className="text-xs text-green-600">Naik</p>
             </div>
             <div className="bg-amber-50 rounded-lg p-3">
-              <p className="text-xl font-bold text-amber-700">{result.tinggal}</p>
+              <p className="text-xl font-bold tabular-nums text-amber-700">{result.tinggal}</p>
               <p className="text-xs text-amber-600">Tinggal</p>
             </div>
             <div className="bg-blue-50 rounded-lg p-3">
-              <p className="text-xl font-bold text-blue-700">{result.lulus}</p>
+              <p className="text-xl font-bold tabular-nums text-blue-700">{result.lulus}</p>
               <p className="text-xs text-blue-600">Lulus</p>
             </div>
             <div className="bg-red-50 rounded-lg p-3">
-              <p className="text-xl font-bold text-red-700">{result.keluar}</p>
+              <p className="text-xl font-bold tabular-nums text-red-700">{result.keluar}</p>
               <p className="text-xs text-red-600">Keluar</p>
             </div>
             <div className="bg-orange-50 rounded-lg p-3">
-              <p className="text-xl font-bold text-orange-700">{result.pindah}</p>
+              <p className="text-xl font-bold tabular-nums text-orange-700">{result.pindah}</p>
               <p className="text-xs text-orange-600">Pindah</p>
             </div>
           </div>

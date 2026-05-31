@@ -8,6 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -101,23 +108,22 @@ export default function RiwayatPage() {
     }
   }
 
-  return (
-    <div className="p-6">
+  return (<div className="p-6 animate-fade-in-up">
       <div className="flex items-center justify-between mb-2">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Riwayat Pembayaran</h1>
           <p className="text-gray-500 mt-1">Riwayat semua transaksi pembayaran</p>
         </div>
         <div className="flex items-center gap-3">
-          <select
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700"
-            value={filterStatus}
-            onChange={e => setFilterStatus(e.target.value)}
-          >
-            <option value="">Semua Status</option>
-            <option value="aktif">Aktif</option>
-            <option value="void">Void</option>
-          </select>
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Semua Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="aktif">Aktif</SelectItem>
+              <SelectItem value="void">Void</SelectItem>
+            </SelectContent>
+          </Select>
           <Input
             type="date"
             className="w-36"
@@ -141,10 +147,10 @@ export default function RiwayatPage() {
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm mb-6">{error}</div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto hover:shadow-md transition-shadow duration-200">
+        <table>
           <thead>
-            <tr className="bg-gray-50">
+            <tr>
               {['No. Transaksi', 'Siswa', 'NIS', 'Nominal', 'Status', 'Tanggal', 'Aksi'].map(col => (
                 <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
               ))}
@@ -153,17 +159,17 @@ export default function RiwayatPage() {
           <tbody>
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i}><td colSpan={7} className="px-6 py-4"><div className="animate-pulse bg-gray-200 h-6 rounded" /></td></tr>
+                <tr key={i}><td colSpan={7} className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" /></td></tr>
               ))
             ) : data.length === 0 ? (
               <tr><td colSpan={7} className="px-6 py-8 text-center text-sm text-gray-400">Belum ada transaksi</td></tr>
             ) : (
               data.map(tx => (
                 <tr key={tx.id} className="border-t border-gray-100 hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-700 font-mono">{tx.transactionNumber}</td>
+                  <td className="px-6 py-4 text-sm tabular-nums text-gray-700 font-mono">{tx.transactionNumber}</td>
                   <td className="px-6 py-4 text-sm text-gray-800 font-medium">{tx.studentName}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">{tx.nis}</td>
-                  <td className="px-6 py-4 text-sm font-semibold text-[#00A651]">{formatRupiah(tx.totalAmount)}</td>
+                  <td className="px-6 py-4 text-sm tabular-nums font-semibold text-accent">{formatRupiah(tx.totalAmount)}</td>
                   <td className="px-6 py-4">
                     <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${tx.status === 'aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                       {tx.status}
@@ -172,11 +178,11 @@ export default function RiwayatPage() {
                   <td className="px-6 py-4 text-sm text-gray-500">{new Date(tx.createdAt).toLocaleDateString('id-ID')}</td>
                   <td className="px-6 py-4 flex items-center gap-2">
                     <Button size="sm" variant="outline" onClick={() => openDetail(tx)} disabled={loadingDetail}>
-                      <Eye className="w-3.5 h-3.5 mr-1" />Detail
+                      <Eye className="size-3.5 mr-1" />Detail
                     </Button>
                     {tx.status === 'void' && (
                       <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleDeleteTransaction(tx.id)} disabled={deletingTx}>
-                        <Trash2 className="w-3.5 h-3.5 mr-1" />Hapus
+                        <Trash2 className="size-3.5 mr-1" />Hapus
                       </Button>
                     )}
                   </td>
@@ -197,9 +203,9 @@ export default function RiwayatPage() {
           </DialogHeader>
           {detailModal && (
             <div className="space-y-4 pt-2">
-              <div className="grid grid-cols-2 gap-3 text-sm bg-gray-50 rounded-lg p-4">
-                <div><span className="text-gray-500">NIS:</span> <span className="font-mono">{detailModal.nis}</span></div>
-                <div><span className="text-gray-500">Total:</span> <span className="font-semibold text-[#00A651]">{formatRupiah(detailModal.totalAmount)}</span></div>
+              <div className="grid grid-cols-2 gap-3 text-sm bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors duration-150">
+                <div><span className="text-gray-500">NIS:</span> <span className="tabular-nums font-mono">{detailModal.nis}</span></div>
+                <div><span className="text-gray-500">Total:</span> <span className="tabular-nums font-semibold text-accent">{formatRupiah(detailModal.totalAmount)}</span></div>
                 <div><span className="text-gray-500">Status:</span> <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${detailModal.status === 'aktif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{detailModal.status}</span></div>
                 <div><span className="text-gray-500">Tanggal:</span> {new Date(detailModal.createdAt).toLocaleDateString('id-ID')}</div>
                 {detailModal.notes && (
@@ -210,9 +216,9 @@ export default function RiwayatPage() {
                 <div>
                   <h4 className="text-sm font-semibold text-gray-700 mb-2">Item Pembayaran</h4>
                   <div className="border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm">
+                    <table>
                       <thead>
-                        <tr className="bg-gray-50">
+                        <tr>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Tagihan ID</th>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Bulan ID</th>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Nominal</th>
@@ -221,7 +227,7 @@ export default function RiwayatPage() {
                       <tbody>
                         {detailModal.items.map(item => (
                           <tr key={item.id} className="border-t border-gray-100">
-                            <td className="px-3 py-2 text-gray-700 font-mono">{item.billId}</td>
+                            <td className="px-3 py-2 tabular-nums text-gray-700 font-mono">{item.billId}</td>
                             <td className="px-3 py-2 text-gray-500">{item.billMonthId ?? '-'}</td>
                             <td className="px-3 py-2 text-gray-700">{formatRupiah(item.amount)}</td>
                           </tr>
@@ -233,7 +239,7 @@ export default function RiwayatPage() {
               )}
               {detailModal.status === 'aktif' && (
                 <Button variant="outline" className="w-full border-red-200 text-red-600 hover:bg-red-50" onClick={() => openVoid(detailModal)}>
-                  <Ban className="w-4 h-4 mr-2" />Void Transaksi
+                  <Ban className="size-4 mr-2" />Void Transaksi
                 </Button>
               )}
             </div>

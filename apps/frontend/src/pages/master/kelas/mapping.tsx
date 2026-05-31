@@ -198,8 +198,7 @@ export default function ClassMappingPage() {
   })
 
   // ── Render ────────────────────────────────────────────────────────────────
-  return (
-    <div className="p-6 space-y-6">
+  return (<div className="p-6 animate-fade-in-up space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Mapping Kelas</h1>
@@ -217,7 +216,7 @@ export default function ClassMappingPage() {
       )}
 
       {/* Filter bar */}
-      <div className="bg-white rounded-lg border p-4">
+      <div className="bg-white rounded-xl border p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Tahun Pelajaran */}
           <div className="space-y-1">
@@ -288,7 +287,7 @@ export default function ClassMappingPage() {
 
       {/* Tabel atas: siswa di kelas terpilih */}
       {selectedClassId && (
-        <div className="bg-white rounded-lg border">
+        <div className="bg-white rounded-xl border">
           <div className="px-4 py-3 border-b flex items-center justify-between">
             <div>
               <h2 className="font-semibold text-gray-800">
@@ -305,7 +304,7 @@ export default function ClassMappingPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-gray-50 border-b">
+                  <tr>
                     <th className="text-left px-4 py-2 font-medium text-gray-600">NIS</th>
                     <th className="text-left px-4 py-2 font-medium text-gray-600">Nama</th>
                     <th className="text-left px-4 py-2 font-medium text-gray-600">Jenis Kelamin</th>
@@ -315,7 +314,7 @@ export default function ClassMappingPage() {
                 <tbody>
                   {currentMembers.map((m) => (
                     <tr key={m.enrollmentId} className="border-b last:border-0 hover:bg-gray-50">
-                      <td className="px-4 py-2 font-mono text-xs">{m.nis}</td>
+                      <td className="px-4 py-2 font-mono tabular-nums text-xs">{m.nis}</td>
                       <td className="px-4 py-2">{m.name}</td>
                       <td className="px-4 py-2">{formatGender(m.gender)}</td>
                       <td className="px-4 py-2">
@@ -349,7 +348,7 @@ export default function ClassMappingPage() {
 
           <div className="grid grid-cols-2 gap-4">
             {/* Tabel kiri: siswa tersedia */}
-            <div className="bg-white rounded-lg border">
+            <div className="bg-white rounded-xl border">
               <div className="px-4 py-3 border-b">
                 <h3 className="font-medium text-gray-800">
                   Siswa Tersedia ({filteredAvailable.length})
@@ -389,7 +388,7 @@ export default function ClassMappingPage() {
                 ) : (
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-gray-50 border-b">
+                      <tr>
                         <th className="text-left px-3 py-2 font-medium text-gray-600">NIS</th>
                         <th className="text-left px-3 py-2 font-medium text-gray-600">Nama</th>
                         <th className="text-left px-3 py-2 font-medium text-gray-600">JK</th>
@@ -403,7 +402,7 @@ export default function ClassMappingPage() {
                           className="border-b last:border-0 cursor-pointer hover:bg-green-50 transition-colors"
                           onClick={() => handleAddToStaging(s)}
                         >
-                          <td className="px-3 py-2 font-mono text-xs">{s.nis}</td>
+                          <td className="px-3 py-2 font-mono tabular-nums text-xs">{s.nis}</td>
                           <td className="px-3 py-2">{s.name}</td>
                           <td className="px-3 py-2">{s.gender}</td>
                           <td className="px-3 py-2 text-gray-500">
@@ -418,7 +417,7 @@ export default function ClassMappingPage() {
             </div>
 
             {/* Tabel kanan: staging */}
-            <div className="bg-white rounded-lg border">
+            <div className="bg-white rounded-xl border">
               <div className="px-4 py-3 border-b">
                 <h3 className="font-medium text-gray-800">
                   Akan Dipindahkan ({staging.length})
@@ -433,7 +432,7 @@ export default function ClassMappingPage() {
                 ) : (
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-gray-50 border-b">
+                      <tr>
                         <th className="text-left px-3 py-2 font-medium text-gray-600">NIS</th>
                         <th className="text-left px-3 py-2 font-medium text-gray-600">Nama</th>
                         <th className="text-left px-3 py-2 font-medium text-gray-600">JK</th>
@@ -443,7 +442,7 @@ export default function ClassMappingPage() {
                     <tbody>
                       {staging.map((s) => (
                         <tr key={s.id} className="border-b last:border-0">
-                          <td className="px-3 py-2 font-mono text-xs">{s.nis}</td>
+                          <td className="px-3 py-2 font-mono tabular-nums text-xs">{s.nis}</td>
                           <td className="px-3 py-2">{s.name}</td>
                           <td className="px-3 py-2">{s.gender}</td>
                           <td className="px-3 py-2">
@@ -466,7 +465,7 @@ export default function ClassMappingPage() {
 
           {/* Action bar */}
           {staging.length > 0 && (
-            <div className="flex items-center justify-end gap-3 bg-white border rounded-lg px-4 py-3">
+            <div className="flex items-center justify-end gap-3 bg-white border rounded-xl px-4 py-3">
               <span className="text-sm text-gray-600">
                 {staging.length} siswa akan ditambahkan ke {selectedClassName}
               </span>
@@ -493,7 +492,7 @@ export default function ClassMappingPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setLepasTarget(null)}>Batal</Button>
             <Button
-              className="bg-red-600 hover:bg-red-700 text-white"
+              variant="destructive"
               onClick={() => lepasTarget && executeLepas(lepasTarget)}
             >
               Lepas

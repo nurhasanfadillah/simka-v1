@@ -589,3 +589,62 @@ Target: Sistem keuangan sekolah siap digunakan operator.
 
 ---
 *Last updated: 2026-05-31*
+
+---
+
+## Milestone: v2.4 — UI Modernization
+
+**Status:** 🔵 In Progress
+**Theme:** Polish & enhance SIMKA UI — design system foundation, sidebar collapsible, core components, dashboard polish, page consistency, motion & micro-interactions.
+**Decisions:** Sidebar hijau gradasi dramatis, font Inter, card glass, rounding sharp kecuali card/input, animasi stagger & transitions.
+
+### Phase 34 — Design System Foundation
+
+**Status:** ✅ Complete
+**Completed:** 2026-05-31
+**Plans:** 6/6
+**Scope:** CSS vars, Inter font, collapsible sidebar, core components, dashboard polish, motion
+
+**Deliverables:**
+- ✅ 34-01: CSS vars (+spacing/radius/shadow), Inter font, glass utilities, UI store, tailwindcss-animate
+- ✅ 34-02: Sidebar collapsible (264↔64px), 3-stop gradient, active state border-left, mobile drawer
+- ✅ 34-03: Skeleton, Badge (6 variants), Table, Separator, Sonner toast
+- ✅ 34-04: Dashboard full modern (Card glass, Table, Skeleton, Badge, transition)
+- ✅ 34-05: Global color tokens (0 hardcoded hex green), destructive button standardized
+- ✅ 34-06: Page transitions (fade-in-up), card hover lift, button press effect
+
+## Progress Summary — Milestone v2.4
+
+| Phase | Name | Status | Plans | Completed |
+|-------|------|--------|-------|-----------|
+| 34 | UI Modernization | ✅ Complete | 6/6 | 2026-05-31 |
+
+**Milestone v2.4 — UI Modernization: 1 of 1 phases complete (100%) ✅**
+
+---
+
+## Milestone: v2.5 — Sidebar Polish
+
+**Status:** 🔵 Planning
+**Theme:** Perbaiki UX sidebar — hamburger di collapsed state, toggle clean, logout inline, header sticky.
+
+### Phase 35 — Sidebar Fixes
+
+**Status:** ✅ Complete
+**Completed:** 2026-05-31
+**Plans:** 1/1
+**Scope:** Hamburger ganti logo saat collapse, toggle clean tanpa floating, logout icon sejajar profil, footer ikut scroll.
+
+**Deliverables:**
+- ✅ 35-01: Rewrite sidebar — hamburger, toggle inline, logout inline, header sticky
+
+## Progress Summary — Milestone v2.5
+
+| Phase | Name | Status | Plans | Completed |
+|-------|------|--------|-------|-----------|
+| 35 | Sidebar Fixes | ✅ Complete | 1/1 | 2026-05-31 |
+
+**Milestone v2.5 — Sidebar Polish: 1 of 1 phases complete (100%) ✅**
+
+---
+*Last updated: 2026-05-31*

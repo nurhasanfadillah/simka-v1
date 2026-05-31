@@ -52,7 +52,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl p-8 space-y-6">
         {/* Logo + Judul */}
         <div className="flex flex-col items-center space-y-2">
-          <img src="/logo.png" alt="Logo Al-Hasaniyyah" className="w-20 h-20 object-contain" />
+          <img src="/logo.png" alt="Logo Al-Hasaniyyah" className="size-20 object-contain" />
           <h1 className="text-2xl font-bold text-accent">SIMKA</h1>
           <p className="text-sm text-gray-500 text-center">
             Sistem Manajemen Keuangan Al-Hasaniyyah
@@ -88,7 +88,7 @@ export default function LoginPage() {
           </div>
 
           {serverError && (
-            <p className="text-sm text-red-500 text-center">{serverError}</p>
+            <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm text-center">{serverError}</div>
           )}
 
           <Button

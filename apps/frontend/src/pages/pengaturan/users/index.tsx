@@ -143,15 +143,14 @@ export default function PengaturanUsersPage() {
   const watchedRoleId = watch('roleId')
   const watchedIsActive = watch('isActive')
 
-  return (
-    <div className="p-6">
+  return (<div className="p-6 animate-fade-in-up">
       <div className="flex items-center justify-between mb-2">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Pengguna</h1>
           <p className="text-gray-500 mt-1">Manajemen akun pengguna sistem</p>
         </div>
-        <Button className="bg-[#00A651] hover:bg-[#008C44]" onClick={openCreate}>
-          <Plus className="w-4 h-4 mr-2" />
+        <Button className="bg-accent hover:bg-accent/90" onClick={openCreate}>
+          <Plus className="size-4 mr-2" />
           Tambah Pengguna
         </Button>
       </div>
@@ -165,10 +164,10 @@ export default function PengaturanUsersPage() {
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto hover:shadow-md transition-shadow duration-200">
         <table className="w-full">
           <thead>
-            <tr className="bg-gray-50">
+            <tr>
               {['Nama', 'Email', 'Role', 'Status', 'Aksi'].map(col => (
                 <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   {col}
@@ -181,7 +180,7 @@ export default function PengaturanUsersPage() {
               Array.from({ length: 3 }).map((_, i) => (
                 <tr key={i}>
                   <td colSpan={5} className="px-6 py-4">
-                    <div className="animate-pulse bg-gray-200 h-6 rounded" />
+                    <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" />
                   </td>
                 </tr>
               ))
@@ -204,10 +203,10 @@ export default function PengaturanUsersPage() {
                   </td>
                   <td className="px-6 py-4 flex items-center gap-2">
                     <Button size="sm" variant="outline" onClick={() => openEdit(user)}>
-                      <Pencil className="w-3.5 h-3.5 mr-1" />Edit
+                      <Pencil className="size-3.5 mr-1" />Edit
                     </Button>
                     <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50" onClick={() => setDeleteTarget(user)}>
-                      <Trash2 className="w-3.5 h-3.5 mr-1" />Hapus
+                      <Trash2 className="size-3.5 mr-1" />Hapus
                     </Button>
                   </td>
                 </tr>
@@ -225,7 +224,7 @@ export default function PengaturanUsersPage() {
           <p className="text-sm text-gray-600 py-2">Hapus pengguna <strong>{deleteTarget?.name}</strong>? Tindakan ini tidak bisa dibatalkan.</p>
           <div className="flex justify-end gap-3 pt-2">
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>Batal</Button>
-            <Button className="bg-red-600 hover:bg-red-700 text-white" disabled={deleting} onClick={() => deleteTarget && handleDelete(deleteTarget.id)}>
+            <Button variant="destructive" disabled={deleting} onClick={() => deleteTarget && handleDelete(deleteTarget.id)}>
               {deleting ? 'Menghapus...' : 'Hapus'}
             </Button>
           </div>
@@ -275,19 +274,23 @@ export default function PengaturanUsersPage() {
             {editing && (
               <div className="space-y-2">
                 <Label>Status</Label>
-                <select
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#00A651] focus:border-transparent"
+                <Select
                   value={watchedIsActive ? 'true' : 'false'}
-                  onChange={e => setValue('isActive', e.target.value === 'true', { shouldValidate: true })}
+                  onValueChange={(v) => setValue('isActive', v === 'true', { shouldValidate: true })}
                 >
-                  <option value="true">Aktif</option>
-                  <option value="false">Nonaktif</option>
-                </select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Pilih status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Aktif</SelectItem>
+                    <SelectItem value="false">Nonaktif</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             )}
             <div className="flex justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>Batal</Button>
-              <Button type="submit" className="bg-[#00A651] hover:bg-[#008C44]" disabled={saving}>
+              <Button type="submit" className="bg-accent hover:bg-accent/90" disabled={saving}>
                 {saving ? 'Menyimpan...' : 'Simpan'}
               </Button>
             </div>

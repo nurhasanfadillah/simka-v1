@@ -228,8 +228,7 @@ export default function TransaksiBaruPage() {
     if (result) window.open(`/api/transactions/${result.id}/receipt`, '_blank')
   }
 
-  return (
-    <div className="p-6 max-w-full">
+  return (<div className="p-6 animate-fade-in-up max-w-full">
       <h1 className="text-2xl font-bold text-gray-900">Transaksi Baru</h1>
       <p className="text-gray-500 mt-1">Catat pembayaran siswa</p>
       <p className="text-xs italic text-red-500 mt-1">
@@ -239,6 +238,8 @@ export default function TransaksiBaruPage() {
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm mt-6">{error}</div>
       )}
+
+      <div className="flex flex-col h-[calc(100dvh-3rem)]">
 
       {/* Search Dialog */}
       <Dialog open={showSearchDialog && !selectedStudent} onOpenChange={(open) => { if (!open && !selectedStudent) setShowSearchDialog(false) }}>
@@ -250,7 +251,7 @@ export default function TransaksiBaruPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-4 gap-3">
               <div className="relative col-span-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" />
                 <Input className="pl-10" placeholder="Ketik nama atau NIS..." value={searchQ} onChange={e => setSearchQ(e.target.value)} />
               </div>
               <Select value={filterSchoolYearId} onValueChange={setFilterSchoolYearId}>
@@ -279,8 +280,8 @@ export default function TransaksiBaruPage() {
                   <thead><tr className="bg-gray-50 sticky top-0"><th className="px-4 py-2 text-left text-xs font-medium text-gray-500">NIS</th><th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Nama</th><th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Kelas</th><th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Unit</th></tr></thead>
                   <tbody>
                     {searchResults.map(s => (
-                      <tr key={s.id} className="border-t border-gray-100 cursor-pointer hover:bg-[#00A651]/10 transition-colors" onClick={() => handleSelectStudent(s)}>
-                        <td className="px-4 py-3 font-mono text-gray-600">{s.nis}</td>
+                      <tr key={s.id} className="border-t border-gray-100 cursor-pointer hover:bg-accent/10 transition-colors" onClick={() => handleSelectStudent(s)}>
+                        <td className="px-4 py-3 tabular-nums font-mono text-gray-600">{s.nis}</td>
                         <td className="px-4 py-3 font-medium text-gray-800">{s.name}</td>
                         <td className="px-4 py-3 text-gray-600">{s.activeClassName ?? '-'}</td>
                         <td className="px-4 py-3 text-gray-500">{s.activeUnitName ?? '-'}</td>
@@ -321,7 +322,7 @@ export default function TransaksiBaruPage() {
                 </div>
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                   <p className="text-sm text-amber-700">Total Tunggakan</p>
-                  <p className="text-2xl font-bold text-amber-800">{formatRupiah(txnData.totalTunggakan)}</p>
+                  <p className="tabular-nums text-2xl font-bold text-amber-800">{formatRupiah(txnData.totalTunggakan)}</p>
                   <p className="text-xs text-amber-600">
                     {txnData.bebas.filter(b => b.status !== 'lunas').length + txnData.bulanan.filter(b => b.status !== 'lunas').length} tagihan belum lunas
                   </p>
@@ -352,7 +353,7 @@ export default function TransaksiBaruPage() {
                           return (
                             <tr
                               key={bill.id}
-                              className={`border-b border-gray-50 cursor-pointer transition-colors ${inCart ? 'bg-[#00A651]/10 border-l-2 border-l-[#00A651]' : 'hover:bg-gray-50'}`}
+                              className={`border-b border-gray-50 cursor-pointer transition-colors ${inCart ? 'bg-accent/10 border-l-2 border-l-accent' : 'hover:bg-gray-50'}`}
                               onClick={() => { if (bill.status !== 'lunas' && bill.remaining > 0) addToCart(bill.id, bill.paymentPostName, bill.remaining) }}
                             >
                               <td className="px-4 py-3 font-medium text-gray-800">{bill.paymentPostName}</td>
@@ -389,7 +390,7 @@ export default function TransaksiBaruPage() {
                         <tr className="border-b border-gray-100">
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Nama Pembayaran</th>
                           {[7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(m => (
-                            <th key={m} className="px-1 py-2 text-center text-[10px] font-medium text-gray-500 w-14">{MONTH_ABBR[m]}</th>
+                            <th key={m} className="px-1 py-2 text-center text-xs font-medium text-gray-500 w-10">{MONTH_ABBR[m]}</th>
                           ))}
                           <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Total</th>
                           <th className="px-3 py-2 text-right text-xs font-medium text-gray-500">Bayar</th>
@@ -405,24 +406,24 @@ export default function TransaksiBaruPage() {
                             </td>
                             {[7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(monthNum => {
                               const m = bill.months.find(bm => bm.month === monthNum)
-                              if (!m) return <td key={monthNum} className="px-1 py-2 text-center text-gray-300 text-[10px]">-</td>
+                              if (!m) return <td key={monthNum} className="px-1 py-2 text-center text-gray-300 text-xs">-</td>
                               const inCart = isInCart(bill.id, m.id)
                               const cellCls = monthCellClass(m)
                               const canClick = m.status !== 'lunas' && monthInBilling(m.month, m.year)
                               return (
                                 <td
                                   key={monthNum}
-                                  className={`px-1 py-2 text-center text-[10px] font-mono border border-gray-100 ${cellCls} ${inCart ? 'ring-2 ring-[#00A651] ring-inset' : ''}`}
+                                  className={`px-1 py-2 text-center text-xs tabular-nums font-mono border border-gray-100 ${cellCls} ${inCart ? 'ring-2 ring-accent ring-inset' : ''}`}
                                   onClick={() => { if (canClick) addToCart(bill.id, bill.paymentPostName, m.amount, m.id, `${MONTH_ABBR[m.month]} ${m.year}`) }}
                                 >
                                   {formatRupiah(m.amount)}
                                 </td>
                               )
                             })}
-                            <td className="px-3 py-2 text-right text-gray-600 font-mono text-xs">{formatRupiah(bill.totalAmount)}</td>
-                            <td className="px-3 py-2 text-right text-blue-600 font-mono text-xs">{formatRupiah(bill.paidAmount)}</td>
-                            <td className="px-3 py-2 text-right text-red-600 font-mono text-xs">{formatRupiah(bill.remaining)}</td>
-                            <td className="px-3 py-2 text-center"><span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium ${STATUS_BADGES[bill.status]}`}>{STATUS_LABELS[bill.status]}</span></td>
+                            <td className="px-3 py-2 text-right tabular-nums text-gray-600 font-mono text-xs">{formatRupiah(bill.totalAmount)}</td>
+                            <td className="px-3 py-2 text-right tabular-nums text-blue-600 font-mono text-xs">{formatRupiah(bill.paidAmount)}</td>
+                            <td className="px-3 py-2 text-right tabular-nums text-red-600 font-mono text-xs">{formatRupiah(bill.remaining)}</td>
+                            <td className="px-3 py-2 text-center"><span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGES[bill.status]}`}>{STATUS_LABELS[bill.status]}</span></td>
                           </tr>
                         ))}
                       </tbody>
@@ -434,7 +435,7 @@ export default function TransaksiBaruPage() {
                               const m = bill.months.find(bm => bm.month === monthNum)
                               return s + (m ? m.amount : 0)
                             }, 0)
-                            return <td key={monthNum} className="px-1 py-2 text-center text-gray-800 font-mono">{total > 0 ? formatRupiah(total) : '-'}</td>
+                            return <td key={monthNum} className="px-1 py-2 text-center tabular-nums text-gray-800 font-mono">{total > 0 ? formatRupiah(total) : '-'}</td>
                           })}
                           <td className="px-3 py-2 text-right text-gray-800">{formatRupiah(txnData.bulanan.reduce((s, b) => s + b.totalAmount, 0))}</td>
                           <td className="px-3 py-2 text-right text-blue-700">{formatRupiah(txnData.bulanan.reduce((s, b) => s + b.paidAmount, 0))}</td>
@@ -444,10 +445,10 @@ export default function TransaksiBaruPage() {
                       </tfoot>
                     </table>
                   </div>
-                  <div className="px-4 py-2 bg-gray-50 border-t flex gap-4 text-[10px] text-gray-500">
-                    <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-yellow-100 border border-yellow-300" /> Masuk Tagihan</span>
-                    <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-gray-100 border border-gray-300" /> Belum Masuk</span>
-                    <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-green-100 border border-green-300" /> Lunas</span>
+                  <div className="px-4 py-2 bg-gray-50 border-t flex gap-4 text-xs text-gray-500">
+                    <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-yellow-100 border border-yellow-300" /> Masuk Tagihan</span>
+                    <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-gray-100 border border-gray-300" /> Belum Masuk</span>
+                    <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-green-100 border border-green-300" /> Lunas</span>
                   </div>
                 </div>
               )}
@@ -461,9 +462,9 @@ export default function TransaksiBaruPage() {
 
               {/* Cart */}
               {cartItems.length > 0 && (
-                <div className="bg-white rounded-xl border-2 border-[#00A651] shadow-sm overflow-hidden sticky bottom-0">
-                  <div className="px-4 py-3 bg-[#00A651]/5 border-b border-[#00A651]/20">
-                    <span className="font-semibold text-[#00A651] text-sm">Keranjang Pembayaran ({cartItems.length} item)</span>
+                <div className="sticky bottom-0 bg-white border-t-2 border-accent p-4 shadow-lg z-10 mt-auto">
+                  <div className="px-4 py-3 bg-accent/5 border-b border-accent/20">
+                    <span className="font-semibold text-accent text-sm">Keranjang Pembayaran ({cartItems.length} item)</span>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
@@ -484,16 +485,18 @@ export default function TransaksiBaruPage() {
                               <Input type="number" className="w-36 h-8 text-sm" value={item.amount} onChange={e => updateCartAmount(idx, Number(e.target.value))} />
                             </td>
                             <td className="px-4 py-2 text-center">
-                              <button className="p-1 hover:bg-red-50 rounded text-red-400 hover:text-red-600" onClick={() => removeFromCart(idx)}><X className="w-4 h-4" /></button>
+                              <Button size="icon" variant="ghost" aria-label="Hapus item dari keranjang" onClick={() => removeFromCart(idx)}>
+                                <X className="size-3.5" />
+                              </Button>
                             </td>
                           </tr>
                         ))}
                       </tbody>
                       <tfoot>
-                        <tr className="bg-gray-50">
+                        <tr>
                           <td className="px-4 py-3 font-bold text-gray-900">Total</td>
                           <td></td>
-                          <td className="px-4 py-3 font-bold text-[#00A651] text-right">{formatRupiah(cartTotal)}</td>
+                          <td className="px-4 py-3 font-bold text-accent text-right">{formatRupiah(cartTotal)}</td>
                           <td></td>
                         </tr>
                       </tfoot>
@@ -504,7 +507,7 @@ export default function TransaksiBaruPage() {
                       <Label className="text-xs">Catatan (opsional)</Label>
                       <Input placeholder="Pembayaran SPP..." value={notes} onChange={e => setNotes(e.target.value)} className="h-9 text-sm" />
                     </div>
-                    <Button className="bg-[#00A651] hover:bg-[#008C44] whitespace-nowrap" onClick={handleSubmit} disabled={saving || cartTotal <= 0}>
+                    <Button className="bg-accent hover:bg-accent/90 whitespace-nowrap" onClick={handleSubmit} disabled={saving || cartTotal <= 0}>
                       {saving ? 'Menyimpan...' : `Konfirmasi — ${formatRupiah(cartTotal)}`}
                     </Button>
                   </div>
@@ -518,23 +521,24 @@ export default function TransaksiBaruPage() {
       {/* Success */}
       {step === 'done' && result && (
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-8 mt-6 text-center">
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+          <CheckCircle className="size-16 text-green-500 mx-auto mb-4" />
           <h2 className="text-xl font-bold text-gray-900">Pembayaran Berhasil</h2>
           <p className="text-gray-500 mt-1">Transaksi telah disimpan</p>
           <div className="bg-gray-50 rounded-xl p-4 mt-6 inline-block text-left">
             <div className="space-y-2">
-              <div className="flex gap-4"><span className="text-sm text-gray-500 w-28">No. Transaksi</span><span className="text-sm font-mono font-bold text-gray-900">{result.transactionNumber}</span></div>
-              <div className="flex gap-4"><span className="text-sm text-gray-500 w-28">Total</span><span className="text-sm font-bold text-[#00A651]">{formatRupiah(result.totalAmount)}</span></div>
+              <div className="flex gap-4"><span className="text-sm text-gray-500 w-28">No. Transaksi</span><span className="text-sm tabular-nums font-mono font-bold text-gray-900">{result.transactionNumber}</span></div>
+              <div className="flex gap-4"><span className="text-sm text-gray-500 w-28">Total</span><span className="text-sm font-bold text-accent">{formatRupiah(result.totalAmount)}</span></div>
               <div className="flex gap-4"><span className="text-sm text-gray-500 w-28">Status</span><span className="inline-flex px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">{result.status}</span></div>
               <div className="flex gap-4"><span className="text-sm text-gray-500 w-28">Tanggal</span><span className="text-sm text-gray-700">{new Date(result.createdAt).toLocaleDateString('id-ID')}</span></div>
             </div>
           </div>
           <div className="flex justify-center gap-3 mt-6">
-            <Button className="bg-[#00A651] hover:bg-[#008C44]" onClick={handleCetakKwitansi}>Cetak Kwitansi</Button>
+            <Button className="bg-accent hover:bg-accent/90" onClick={handleCetakKwitansi}>Cetak Kwitansi</Button>
             <Button variant="outline" onClick={resetAll}>Transaksi Baru</Button>
           </div>
         </div>
       )}
+      </div>
     </div>
   )
 }

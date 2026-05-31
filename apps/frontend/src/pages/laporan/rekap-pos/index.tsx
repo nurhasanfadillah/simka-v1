@@ -3,6 +3,13 @@ import { apiClient } from '@/lib/api'
 import type { ReportRekapPos, SchoolYear } from '@/types/master'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 const formatRupiah = (v: number) =>
   new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(v)
@@ -53,8 +60,7 @@ export default function RekapPosPage() {
     window.open(`/api/reports/rekap-pos/export/${format}?${params.toString()}`, '_blank')
   }
 
-  return (
-    <div className="p-6">
+  return (<div className="p-6 animate-fade-in-up">
       <div className="flex items-center justify-between mb-2">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Rekap POS</h1>
@@ -63,18 +69,18 @@ export default function RekapPosPage() {
         <div className="flex items-center gap-3">
           <Input type="date" className="w-36" value={dateFrom} onChange={e => setDateFrom(e.target.value)} placeholder="Dari" />
           <Input type="date" className="w-36" value={dateTo} onChange={e => setDateTo(e.target.value)} placeholder="Sampai" />
-          <select
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white text-gray-700"
-            value={filterSchoolYearId}
-            onChange={e => setFilterSchoolYearId(e.target.value)}
-          >
-            <option value="">Semua Tahun</option>
-            {schoolYears.map(y => (
-              <option key={y.id} value={y.id}>{y.name}</option>
-            ))}
-          </select>
-          <Button variant="outline" onClick={() => handleExport('excel')}>Excel</Button>
-          <Button variant="outline" onClick={() => handleExport('pdf')}>PDF</Button>
+          <Select value={filterSchoolYearId} onValueChange={setFilterSchoolYearId}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Semua Tahun" />
+            </SelectTrigger>
+            <SelectContent>
+              {schoolYears.map(y => (
+                <SelectItem key={y.id} value={String(y.id)}>{y.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button variant="outline" className="border-green-300 text-green-700 hover:bg-green-50" onClick={() => handleExport('excel')}>Excel</Button>
+          <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-50" onClick={() => handleExport('pdf')}>PDF</Button>
         </div>
       </div>
       <p className="text-xs italic text-gray-400 mb-4">
@@ -85,17 +91,17 @@ export default function RekapPosPage() {
 
       {data && (
         <div className="grid grid-cols-1 gap-4 mb-6">
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 hover:shadow-md transition-shadow duration-200">
             <p className="text-sm text-gray-500">Total POS Aktif</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{data.total} POS</p>
+            <p className="text-2xl font-bold tabular-nums text-gray-900 mt-1">{data.total} POS</p>
           </div>
         </div>
       )}
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto hover:shadow-md transition-shadow duration-200">
+        <table>
           <thead>
-            <tr className="bg-gray-50">
+            <tr>
               {['Kode POS', 'Nama POS', 'Total Penerimaan', 'Jumlah Transaksi', 'Jumlah Siswa'].map(col => (
                 <th key={col} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{col}</th>
               ))}
@@ -104,16 +110,16 @@ export default function RekapPosPage() {
           <tbody>
             {loading ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <tr key={i}><td colSpan={5} className="px-6 py-4"><div className="animate-pulse bg-gray-200 h-6 rounded" /></td></tr>
+                <tr key={i}><td colSpan={5} className="px-6 py-4"><div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" /><div className="mt-2 h-4 bg-gray-200 rounded animate-pulse w-1/2" /></td></tr>
               ))
             ) : !data || data.perPos.length === 0 ? (
               <tr><td colSpan={5} className="px-6 py-8 text-center text-sm text-gray-400">Tidak ada data rekap POS</td></tr>
             ) : (
               data.perPos.map(row => (
                 <tr key={row.posId} className="border-t border-gray-100 hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-mono font-medium text-gray-700">{row.posCode}</td>
+                  <td className="px-6 py-4 text-sm font-mono tabular-nums font-medium text-gray-700">{row.posCode}</td>
                   <td className="px-6 py-4 text-sm text-gray-800">{row.posName}</td>
-                  <td className="px-6 py-4 text-sm font-semibold text-[#00A651]">{formatRupiah(row.totalPenerimaan)}</td>
+                  <td className="px-6 py-4 text-sm font-semibold tabular-nums text-accent">{formatRupiah(row.totalPenerimaan)}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{row.jumlahTransaksi}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{row.jumlahSiswa}</td>
                 </tr>
