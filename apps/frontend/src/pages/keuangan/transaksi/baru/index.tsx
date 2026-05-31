@@ -402,11 +402,11 @@ export default function TransaksiBaruPage() {
                               className={`border-b border-gray-50 cursor-pointer transition-colors ${inCart ? 'bg-accent/10 border-l-2 border-l-accent' : 'hover:bg-gray-50'}`}
                               onClick={() => { if (bill.status !== 'lunas' && bill.remaining > 0) addToCart(bill.id, bill.paymentPostName, bill.remaining) }}
                             >
-                              <td className="px-4 py-3 font-medium text-gray-800">{bill.paymentPostName}</td>
+                              <td className="px-4 py-3 font-medium text-gray-800 whitespace-nowrap">{bill.paymentPostName}</td>
                               <td className="px-4 py-3 text-right text-gray-600">{formatRupiah(bill.totalAmount)}</td>
                               <td className="px-4 py-3 text-right text-blue-600">{formatRupiah(bill.paidAmount)}</td>
                               <td className="px-4 py-3 text-right font-medium text-red-600">{formatRupiah(bill.remaining)}</td>
-                              <td className="px-4 py-3 text-center"><span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGES[bill.status]}`}>{STATUS_LABELS[bill.status]}</span></td>
+                              <td className="px-4 py-3 text-center whitespace-nowrap"><span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGES[bill.status]}`}>{STATUS_LABELS[bill.status]}</span></td>
                             </tr>
                           )
                         })}
@@ -447,7 +447,7 @@ export default function TransaksiBaruPage() {
                       <tbody>
                         {txnData.bulanan.map(bill => (
                           <tr key={bill.id} className="border-b border-gray-50">
-                            <td className="px-3 py-2 font-medium text-gray-800 text-xs">
+                            <td className="px-3 py-2 font-medium text-gray-800 text-xs whitespace-nowrap">
                               {bill.paymentPostName}
                             </td>
                             {[7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(monthNum => {
@@ -470,7 +470,7 @@ export default function TransaksiBaruPage() {
                             <td className="px-3 py-2 text-right tabular-nums text-gray-600 font-mono text-xs">{formatRupiah(bill.totalAmount)}</td>
                             <td className="px-3 py-2 text-right tabular-nums text-blue-600 font-mono text-xs">{formatRupiah(bill.paidAmount)}</td>
                             <td className="px-3 py-2 text-right tabular-nums text-red-600 font-mono text-xs">{formatRupiah(bill.remaining)}</td>
-                            <td className="px-3 py-2 text-center"><span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGES[bill.status]}`}>{STATUS_LABELS[bill.status]}</span></td>
+                            <td className="px-3 py-2 text-center whitespace-nowrap"><span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGES[bill.status]}`}>{STATUS_LABELS[bill.status]}</span></td>
                           </tr>
                         ))}
                       </tbody>
