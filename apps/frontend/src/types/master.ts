@@ -459,6 +459,8 @@ export interface TxnBulananMonth {
   month: number
   year: number
   amount: number
+  paidAmount: number
+  remaining: number
   status: 'belum_bayar' | 'lunas'
 }
 

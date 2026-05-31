@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { CalendarDays } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import type { ReportTahunan, SchoolYear } from '@/types/master'
 import { Button } from '@/components/ui/button'
@@ -73,6 +74,7 @@ export default function TahunanPage() {
 
       {!selectedYearId && !loading && (
         <div className="text-center py-12 text-gray-400">
+          <CalendarDays className="mx-auto mb-3 size-8 text-gray-300" />
           <p>Pilih tahun ajaran untuk melihat laporan</p>
         </div>
       )}

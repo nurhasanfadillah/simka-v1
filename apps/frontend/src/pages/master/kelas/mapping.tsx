@@ -25,6 +25,7 @@ import {
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog'
+import { AlertDialog } from '@/components/ui/alert-dialog'
 
 function formatGender(g: 'L' | 'P') {
   return g === 'L' ? 'Laki-laki' : 'Perempuan'
@@ -480,26 +481,14 @@ export default function ClassMappingPage() {
         </>
       )}
 
-      <Dialog open={!!lepasTarget} onOpenChange={(open) => { if (!open) setLepasTarget(null) }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Lepas Siswa dari Kelas</DialogTitle>
-            <DialogDescription>
-              Lepas <strong>{lepasTarget?.name}</strong> dari kelas <strong>{selectedClassName}</strong>?
-              Siswa dapat di-assign kembali melalui Mapping Kelas.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setLepasTarget(null)}>Batal</Button>
-            <Button
-              variant="destructive"
-              onClick={() => lepasTarget && executeLepas(lepasTarget)}
-            >
-              Lepas
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AlertDialog
+        open={!!lepasTarget}
+        onOpenChange={(open) => { if (!open) setLepasTarget(null) }}
+        title="Lepaskan Siswa?"
+        description={`Lepas ${lepasTarget?.name ?? 'siswa'} dari kelas ${selectedClassName}? Siswa dapat di-assign kembali melalui Mapping Kelas.`}
+        actionLabel="Lepaskan"
+        onAction={() => lepasTarget && executeLepas(lepasTarget)}
+      />
 
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent>

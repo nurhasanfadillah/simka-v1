@@ -187,13 +187,19 @@ export class BillsService {
           status: bill.status,
         });
       } else {
-        const months = billMonthsList.map(m => ({
-          id: m.id,
-          month: m.month,
-          year: m.year,
-          amount: m.amount,
-          status: m.status,
-        }));
+        const months = billMonthsList.map(m => {
+          const monthPaid = paymentByMonth[m.id] ?? 0;
+          const monthRemaining = m.amount - monthPaid;
+          return {
+            id: m.id,
+            month: m.month,
+            year: m.year,
+            amount: m.amount,
+            paidAmount: monthPaid,
+            remaining: monthRemaining > 0 ? monthRemaining : 0,
+            status: m.status as 'belum_bayar' | 'lunas',
+          };
+        });
         bulanan.push({
           id: bill.id,
           paymentPostName: bill.paymentPostName,

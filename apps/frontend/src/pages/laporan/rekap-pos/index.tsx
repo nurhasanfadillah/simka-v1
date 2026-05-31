@@ -66,9 +66,15 @@ export default function RekapPosPage() {
           <h1 className="text-2xl font-bold text-gray-900">Rekap POS</h1>
           <p className="text-gray-500 mt-1">Rekap penerimaan per pos pembayaran</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Input type="date" className="w-36" value={dateFrom} onChange={e => setDateFrom(e.target.value)} placeholder="Dari" />
-          <Input type="date" className="w-36" value={dateTo} onChange={e => setDateTo(e.target.value)} placeholder="Sampai" />
+        <div className="flex items-center gap-3 flex-wrap gap-y-2">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-gray-500">Dari</label>
+            <Input type="date" className="w-36" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-gray-500">Sampai</label>
+            <Input type="date" className="w-36" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+          </div>
           <Select value={filterSchoolYearId} onValueChange={setFilterSchoolYearId}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Semua Tahun" />

@@ -20,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { AlertDialog } from '@/components/ui/alert-dialog'
 
 const formatRupiah = (v: number) =>
   new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(v)
@@ -247,37 +248,28 @@ export default function RiwayatPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Void Confirm Modal */}
-      <Dialog open={!!voidTx} onOpenChange={() => setVoidTx(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Void Transaksi</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <p className="text-sm text-gray-600">
-              Anda akan membatalkan transaksi <span className="font-mono font-bold">{voidTx?.transactionNumber}</span>.
-              Status akan berubah menjadi "void" dan tagihan dikembalikan.
-            </p>
-            <div className="space-y-2">
-              <Label>Alasan Void *</Label>
-              <Input
-                placeholder="Minimal 3 karakter"
-                value={voidReason}
-                onChange={e => setVoidReason(e.target.value)}
-              />
-              {voidReason.length > 0 && voidReason.length < 3 && (
-                <p className="text-sm text-red-500">Minimal 3 karakter</p>
-              )}
-            </div>
-            <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setVoidTx(null)}>Batal</Button>
-              <Button className="bg-red-600 hover:bg-red-700" onClick={handleVoid} disabled={voidReason.length < 3 || voiding}>
-                {voiding ? 'Memproses...' : 'Void Transaksi'}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <AlertDialog
+        open={!!voidTx}
+        onOpenChange={(open) => { if (!open) setVoidTx(null) }}
+        title="Void Transaksi?"
+        description={`Anda akan membatalkan transaksi ${voidTx?.transactionNumber}. Status akan berubah menjadi "void" dan tagihan dikembalikan. Tindakan ini permanen dan tidak dapat diurungkan.`}
+        actionLabel="Void"
+        onAction={handleVoid}
+        loading={voiding}
+        disabled={voidReason.length < 3}
+      >
+        <div className="space-y-2">
+          <Label>Alasan Void *</Label>
+          <Input
+            placeholder="Minimal 3 karakter"
+            value={voidReason}
+            onChange={e => setVoidReason(e.target.value)}
+          />
+          {voidReason.length > 0 && voidReason.length < 3 && (
+            <p className="text-sm text-red-500">Minimal 3 karakter</p>
+          )}
+        </div>
+      </AlertDialog>
     </div>
   )
 }

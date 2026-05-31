@@ -22,6 +22,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
+import { AlertDialog } from '@/components/ui/alert-dialog'
 import type {
   PaymentTemplate,
   PaymentBookInfo,
@@ -438,22 +439,15 @@ export default function GeneratePembayaranPage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={!!deleteBillTarget} onOpenChange={(open) => { if (!open) setDeleteBillTarget(null) }}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader><DialogTitle>Hapus Tagihan</DialogTitle></DialogHeader>
-          <p className="text-sm text-gray-600 py-2">
-            Hapus tagihan <strong>{deleteBillTarget?.studentName}</strong> — {deleteBillTarget?.className}?
-            {deleteBillTarget && deleteBillTarget.paidAmount > 0 && (
-              <span className="block mt-1 text-yellow-600">Telah dibayar: {formatRupiah(deleteBillTarget.paidAmount)}</span>
-            )}
-          </p>
-          <p className="text-sm text-gray-600">Tagihan yang sudah memiliki transaksi tidak dapat dihapus.</p>
-          <div className="flex justify-end gap-3 pt-2">
-            <Button variant="outline" onClick={() => setDeleteBillTarget(null)}>Batal</Button>
-            <Button variant="destructive" disabled={saving} onClick={handleDeleteBill}>{saving ? 'Menghapus...' : 'Hapus'}</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <AlertDialog
+        open={!!deleteBillTarget}
+        onOpenChange={(open) => { if (!open) setDeleteBillTarget(null) }}
+        title="Hapus Tagihan?"
+        description={`Hapus tagihan ${deleteBillTarget?.studentName} — ${deleteBillTarget?.className}?${deleteBillTarget && deleteBillTarget.paidAmount > 0 ? ` Telah dibayar: ${formatRupiah(deleteBillTarget.paidAmount)}.` : ''} Tagihan yang sudah memiliki transaksi tidak dapat dihapus.`}
+        actionLabel="Hapus"
+        onAction={handleDeleteBill}
+        loading={saving}
+      />
 
       <Dialog open={createPreviewOpen} onOpenChange={setCreatePreviewOpen}>
         <DialogContent className="sm:max-w-md">

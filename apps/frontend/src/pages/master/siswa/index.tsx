@@ -277,7 +277,7 @@ export default function SiswaPage() {
             <Plus className="size-4 mr-2" />
             Tambah Siswa
           </Button>
-          <Button variant="outline" className="border-[#00A651] text-accent hover:bg-accent hover:text-white" onClick={() => navigate('/master/siswa/import')}>
+          <Button variant="outline" className="border-accent text-accent hover:bg-accent hover:text-white" onClick={() => navigate('/master/siswa/import')}>
             <Upload className="size-4 mr-2" />
             Import Data
           </Button>

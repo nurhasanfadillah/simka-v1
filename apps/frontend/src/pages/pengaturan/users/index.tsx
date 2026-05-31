@@ -23,6 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { AlertDialog } from '@/components/ui/alert-dialog'
 
 const schema = z.object({
   name: z.string().min(1, 'Wajib diisi'),
@@ -218,18 +219,15 @@ export default function PengaturanUsersPage() {
 
       <DeleteErrorModal open={deleteErrorData !== null} onClose={() => setDeleteErrorData(null)} relatedData={deleteErrorData ?? {}} />
 
-      <Dialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader><DialogTitle>Hapus Pengguna</DialogTitle></DialogHeader>
-          <p className="text-sm text-gray-600 py-2">Hapus pengguna <strong>{deleteTarget?.name}</strong>? Tindakan ini tidak bisa dibatalkan.</p>
-          <div className="flex justify-end gap-3 pt-2">
-            <Button variant="outline" onClick={() => setDeleteTarget(null)}>Batal</Button>
-            <Button variant="destructive" disabled={deleting} onClick={() => deleteTarget && handleDelete(deleteTarget.id)}>
-              {deleting ? 'Menghapus...' : 'Hapus'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}
+        title="Hapus Pengguna?"
+        description={`Hapus pengguna ${deleteTarget?.name}? Tindakan ini tidak bisa dibatalkan.`}
+        actionLabel="Hapus"
+        onAction={() => deleteTarget && handleDelete(deleteTarget.id)}
+        loading={deleting}
+      />
 
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="sm:max-w-md">

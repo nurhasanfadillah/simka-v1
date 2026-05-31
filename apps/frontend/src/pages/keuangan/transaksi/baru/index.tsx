@@ -197,8 +197,9 @@ export default function TransaksiBaruPage() {
     return false
   }
 
-  const monthCellClass = (m: TxnBulananMonth) => {
+  const monthCellClass = (m: TxnBulananMonth, billStatus: string) => {
     if (m.status === 'lunas') return 'bg-green-100 text-green-700'
+    if (billStatus === 'cicilan' && m.paidAmount > 0) return 'bg-purple-100 text-purple-700 cursor-pointer hover:bg-purple-200'
     if (monthInBilling(m.month, m.year)) return 'bg-yellow-100 text-yellow-800 cursor-pointer hover:bg-yellow-200'
     return 'bg-gray-100 text-gray-400'
   }
@@ -239,7 +240,7 @@ export default function TransaksiBaruPage() {
         <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm mt-6">{error}</div>
       )}
 
-      <div className="flex flex-col h-[calc(100dvh-3rem)]">
+      <div className="flex flex-col min-h-0">
 
       {/* Search Dialog */}
       <Dialog open={showSearchDialog && !selectedStudent} onOpenChange={(open) => { if (!open && !selectedStudent) setShowSearchDialog(false) }}>
@@ -408,15 +409,16 @@ export default function TransaksiBaruPage() {
                               const m = bill.months.find(bm => bm.month === monthNum)
                               if (!m) return <td key={monthNum} className="px-1 py-2 text-center text-gray-300 text-xs">-</td>
                               const inCart = isInCart(bill.id, m.id)
-                              const cellCls = monthCellClass(m)
+                              const cellCls = monthCellClass(m, bill.status)
                               const canClick = m.status !== 'lunas' && monthInBilling(m.month, m.year)
+                              const displayAmount = bill.status === 'cicilan' && m.paidAmount > 0 ? m.remaining : m.amount
                               return (
                                 <td
                                   key={monthNum}
                                   className={`px-1 py-2 text-center text-xs tabular-nums font-mono border border-gray-100 ${cellCls} ${inCart ? 'ring-2 ring-accent ring-inset' : ''}`}
-                                  onClick={() => { if (canClick) addToCart(bill.id, bill.paymentPostName, m.amount, m.id, `${MONTH_ABBR[m.month]} ${m.year}`) }}
+                                  onClick={() => { if (canClick) addToCart(bill.id, bill.paymentPostName, displayAmount, m.id, `${MONTH_ABBR[m.month]} ${m.year}`) }}
                                 >
-                                  {formatRupiah(m.amount)}
+                                  {formatRupiah(displayAmount)}
                                 </td>
                               )
                             })}
@@ -447,6 +449,7 @@ export default function TransaksiBaruPage() {
                   </div>
                   <div className="px-4 py-2 bg-gray-50 border-t flex gap-4 text-xs text-gray-500">
                     <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-yellow-100 border border-yellow-300" /> Masuk Tagihan</span>
+                    <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-purple-100 border border-purple-300" /> Cicilan</span>
                     <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-gray-100 border border-gray-300" /> Belum Masuk</span>
                     <span className="inline-flex items-center gap-1"><span className="size-3 rounded bg-green-100 border border-green-300" /> Lunas</span>
                   </div>
@@ -462,14 +465,14 @@ export default function TransaksiBaruPage() {
 
               {/* Cart */}
               {cartItems.length > 0 && (
-                <div className="sticky bottom-0 bg-white border-t-2 border-accent p-4 shadow-lg z-10 mt-auto">
-                  <div className="px-4 py-3 bg-accent/5 border-b border-accent/20">
+                <div className="sticky bottom-0 bg-white border-t-2 border-accent shadow-lg z-10 max-h-[40vh] flex flex-col">
+                  <div className="px-4 py-2 bg-accent/5 border-b border-accent/20 shrink-0">
                     <span className="font-semibold text-accent text-sm">Keranjang Pembayaran ({cartItems.length} item)</span>
                   </div>
-                  <div className="overflow-x-auto">
+                  <div className="overflow-y-auto flex-1">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-gray-100">
+                        <tr className="border-b border-gray-100 sticky top-0 bg-gray-50">
                           <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Pembayaran</th>
                           <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Bulan</th>
                           <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 w-40">Nominal</th>
@@ -502,7 +505,7 @@ export default function TransaksiBaruPage() {
                       </tfoot>
                     </table>
                   </div>
-                  <div className="px-4 py-3 border-t border-gray-100 flex items-end gap-4">
+                  <div className="px-4 py-3 border-t border-gray-100 flex items-end gap-4 shrink-0 bg-white">
                     <div className="flex-1">
                       <Label className="text-xs">Catatan (opsional)</Label>
                       <Input placeholder="Pembayaran SPP..." value={notes} onChange={e => setNotes(e.target.value)} className="h-9 text-sm" />

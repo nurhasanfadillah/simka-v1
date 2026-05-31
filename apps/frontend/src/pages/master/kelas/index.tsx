@@ -268,7 +268,7 @@ export default function KelasPage() {
             onClick={() => setActiveTab(tab)}
             className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab
-                ? 'border-[#00A651] text-accent'
+                ? 'border-accent text-accent'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >

@@ -45,6 +45,14 @@ export default function ProfilPage() {
   const formatLastLogin = (v: string | null) =>
     v ? new Date(v).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }) : 'Belum pernah login'
 
+  const getPermissionColor = (code: string) => {
+    if (/^(user\.|role\.|auth\.)/.test(code)) return 'bg-blue-50 text-blue-700'
+    if (/^(student\.|class\.|school)/.test(code)) return 'bg-green-50 text-green-700'
+    if (/^(report\.|transaction\.)/.test(code)) return 'bg-purple-50 text-purple-700'
+    if (/^payment/.test(code)) return 'bg-orange-50 text-orange-700'
+    return 'bg-gray-100 text-gray-600'
+  }
+
   const onSubmitPw = async (formData: PwFormData) => {
     setPwSaving(true)
     setPwError(null)
@@ -90,15 +98,15 @@ export default function ProfilPage() {
             <dl className="grid grid-cols-2 gap-x-6 gap-y-4">
               <div>
                 <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</dt>
-                <dd className="mt-1 text-sm font-semibold text-gray-900">{data.name}</dd>
+                <dd className="mt-1 text-sm font-semibold text-gray-900 bg-gray-50 rounded px-3 py-1">{data.name}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Email</dt>
-                <dd className="mt-1 text-sm text-gray-700">{data.email}</dd>
+                <dd className="mt-1 text-sm text-gray-700 bg-gray-50 rounded px-3 py-1">{data.email}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Role</dt>
-                <dd className="mt-1 text-sm text-gray-700">{data.role}</dd>
+                <dd className="mt-1 text-sm text-gray-700 bg-gray-50 rounded px-3 py-1">{data.role}</dd>
               </div>
               <div>
                 <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Status Akun</dt>
@@ -110,7 +118,7 @@ export default function ProfilPage() {
               </div>
               <div className="col-span-2">
                 <dt className="text-xs font-medium text-gray-500 uppercase tracking-wider">Terakhir Login</dt>
-                <dd className="mt-1 text-sm text-gray-700">{formatLastLogin(data.lastLogin)}</dd>
+                <dd className="mt-1 text-sm text-gray-700 bg-gray-50 rounded px-3 py-1">{formatLastLogin(data.lastLogin)}</dd>
               </div>
             </dl>
           </div>
@@ -122,7 +130,7 @@ export default function ProfilPage() {
             ) : (
               <div className="flex flex-wrap gap-2">
                 {data.permissions.map(p => (
-                  <span key={p} className="inline-flex px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs font-mono tabular-nums">{p}</span>
+                  <span key={p} className={`inline-flex px-2 py-1 rounded text-xs font-mono tabular-nums ${getPermissionColor(p)}`}>{p}</span>
                 ))}
               </div>
             )}

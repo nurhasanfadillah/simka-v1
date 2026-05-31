@@ -117,7 +117,7 @@ export default function SiswaImportPage() {
             <div className="flex items-end">
               <Button
                 variant="outline"
-                className="border-[#00A651] text-accent hover:bg-accent hover:text-white"
+                className="border-accent text-accent hover:bg-accent hover:text-white"
                 onClick={() => window.open('/api/master/students/template', '_blank')}
               >
                 <Download className="size-4 mr-2" />
@@ -127,7 +127,7 @@ export default function SiswaImportPage() {
           </div>
 
           <div
-            className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#00A651] transition-colors cursor-pointer"
+            className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-accent transition-colors cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
           >
             <input

@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { AlertDialog } from '@/components/ui/alert-dialog'
 
 const createSchema = z.object({
   name: z.string().min(1, 'Wajib diisi'),
@@ -199,18 +200,15 @@ export default function PengaturanRolesPage() {
 
       <DeleteErrorModal open={deleteErrorData !== null} onClose={() => setDeleteErrorData(null)} relatedData={deleteErrorData ?? {}} />
 
-      <Dialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader><DialogTitle>Hapus Role</DialogTitle></DialogHeader>
-          <p className="text-sm text-gray-600 py-2">Hapus role <strong>{deleteTarget?.name}</strong>? Tindakan ini tidak bisa dibatalkan.</p>
-          <div className="flex justify-end gap-3 pt-2">
-            <Button variant="outline" onClick={() => setDeleteTarget(null)}>Batal</Button>
-            <Button variant="destructive" disabled={deleting} onClick={() => deleteTarget && handleDelete(deleteTarget.id)}>
-              {deleting ? 'Menghapus...' : 'Hapus'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}
+        title="Hapus Role?"
+        description={`Hapus role ${deleteTarget?.name}? Tindakan ini tidak bisa dibatalkan.`}
+        actionLabel="Hapus"
+        onAction={() => deleteTarget && handleDelete(deleteTarget.id)}
+        loading={deleting}
+      />
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <DialogContent className="sm:max-w-md">
@@ -253,7 +251,7 @@ export default function PengaturanRolesPage() {
                         e.target.checked ? next.add(p.id) : next.delete(p.id)
                         setCheckedIds(next)
                       }}
-                      className="size-4 accent-[#00A651]"
+                      className="size-4 accent-emerald-600"
                     />
                     <div>
                       <span className="text-sm font-medium text-gray-800">{p.name}</span>

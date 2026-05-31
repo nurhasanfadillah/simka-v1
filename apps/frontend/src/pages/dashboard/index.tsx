@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Users, CreditCard, Banknote, BarChart2, ChevronRight } from 'lucide-react'
+import { Users, CreditCard, Banknote, BarChart2, ChevronRight, Inbox } from 'lucide-react'
 import { apiClient } from '@/lib/api'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -202,6 +202,7 @@ export default function DashboardPage() {
               ) : transactions.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                    <Inbox className="mx-auto mb-2 size-8 text-gray-300" />
                     Belum ada transaksi
                   </TableCell>
                 </TableRow>
