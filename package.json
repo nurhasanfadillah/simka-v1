@@ -18,6 +18,7 @@
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
   },
+  "packageManager": "pnpm@10.34.1",
   "pnpm": {
     "onlyBuiltDependencies": ["@nestjs/core", "esbuild", "es5-ext", "puppeteer"]
   }
