@@ -1,0 +1,96 @@
+- generic [ref=e15]:
+  - complementary [ref=e16]:
+    - generic [ref=e17]:
+      - img "Logo" [ref=e18]
+      - generic [ref=e19]: SIMKA
+      - generic [ref=e20]: Sistem Manajemen Keuangan
+    - navigation [ref=e21]:
+      - link "Dashboard" [ref=e22] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e23]
+        - generic [ref=e28]: Dashboard
+      - paragraph [ref=e29]: Master Data
+      - link "Tahun Pelajaran" [ref=e30] [cursor=pointer]:
+        - /url: /master/tahun-pelajaran
+        - img [ref=e31]
+        - generic [ref=e33]: Tahun Pelajaran
+      - link "Manajemen Kelas" [ref=e34] [cursor=pointer]:
+        - /url: /master/kelas
+        - img [ref=e35]
+        - generic [ref=e40]: Manajemen Kelas
+      - link "Data Siswa" [ref=e41] [cursor=pointer]:
+        - /url: /master/siswa
+        - img [ref=e42]
+        - generic [ref=e45]: Data Siswa
+      - link "POS Keuangan" [ref=e46] [cursor=pointer]:
+        - /url: /master/pos
+        - img [ref=e47]
+        - generic [ref=e49]: POS Keuangan
+      - link "Template Pembayaran" [ref=e50] [cursor=pointer]:
+        - /url: /master/template
+        - img [ref=e51]
+        - generic [ref=e54]: Template Pembayaran
+      - paragraph [ref=e55]: Keuangan
+      - link "Generate Tagihan" [ref=e56] [cursor=pointer]:
+        - /url: /keuangan/generate
+        - img [ref=e57]
+        - generic [ref=e59]: Generate Tagihan
+      - link "Data Tagihan" [ref=e60] [cursor=pointer]:
+        - /url: /keuangan/tagihan
+        - img [ref=e61]
+        - generic [ref=e64]: Data Tagihan
+      - link "Transaksi Baru" [ref=e65] [cursor=pointer]:
+        - /url: /keuangan/transaksi/baru
+        - img [ref=e66]
+        - generic [ref=e69]: Transaksi Baru
+      - link "Riwayat Pembayaran" [ref=e70] [cursor=pointer]:
+        - /url: /keuangan/riwayat
+        - img [ref=e71]
+        - generic [ref=e75]: Riwayat Pembayaran
+      - link "Tunggakan" [ref=e76] [cursor=pointer]:
+        - /url: /keuangan/tunggakan
+        - img [ref=e77]
+        - generic [ref=e79]: Tunggakan
+      - paragraph [ref=e80]: Laporan
+      - link "Laporan Harian" [ref=e81] [cursor=pointer]:
+        - /url: /laporan/harian
+        - img [ref=e82]
+        - generic [ref=e84]: Laporan Harian
+      - link "Laporan Bulanan" [ref=e85] [cursor=pointer]:
+        - /url: /laporan/bulanan
+        - img [ref=e86]
+        - generic [ref=e87]: Laporan Bulanan
+      - link "Laporan Tahunan" [ref=e88] [cursor=pointer]:
+        - /url: /laporan/tahunan
+        - img [ref=e89]
+        - generic [ref=e91]: Laporan Tahunan
+      - link "Lap. Tunggakan" [ref=e92] [cursor=pointer]:
+        - /url: /laporan/tunggakan
+        - img [ref=e93]
+        - generic [ref=e96]: Lap. Tunggakan
+      - link "Rekap POS" [ref=e97] [cursor=pointer]:
+        - /url: /laporan/rekap-pos
+        - img [ref=e98]
+        - generic [ref=e101]: Rekap POS
+      - paragraph [ref=e102]: Pengaturan
+      - link "Pengguna" [ref=e103] [cursor=pointer]:
+        - /url: /pengaturan/users
+        - img [ref=e104]
+        - generic [ref=e116]: Pengguna
+      - link "Role & Akses" [ref=e117] [cursor=pointer]:
+        - /url: /pengaturan/roles
+        - img [ref=e118]
+        - generic [ref=e121]: Role & Akses
+    - generic [ref=e122]:
+      - generic [ref=e123]:
+        - generic [ref=e125]: SA
+        - generic [ref=e126]:
+          - paragraph [ref=e127]: Super Admin
+          - paragraph [ref=e128]: Super Admin
+      - button "Logout" [ref=e129] [cursor=pointer]:
+        - img [ref=e130]
+        - generic [ref=e133]: Logout
+  - main [ref=e134]:
+    - generic [ref=e135]:
+      - heading "Dashboard" [level=1] [ref=e136]
+      - paragraph [ref=e137]: Memuat data...

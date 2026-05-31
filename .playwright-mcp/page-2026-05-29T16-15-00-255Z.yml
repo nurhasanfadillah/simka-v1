@@ -1,0 +1,17 @@
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - img "Logo Al-Hasaniyyah" [ref=e6]
+    - heading "SIMKA" [level=1] [ref=e7]
+    - paragraph [ref=e8]: Sistem Manajemen Keuangan Al-Hasaniyyah
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - text: Email
+      - textbox "Email" [active] [ref=e11]:
+        - /placeholder: admin@alhasaniyyah.sch.id
+      - paragraph [ref=e15]: Email tidak valid
+    - generic [ref=e12]:
+      - text: Password
+      - textbox "Password" [ref=e13]:
+        - /placeholder: ••••••••
+      - paragraph [ref=e16]: Password wajib diisi
+    - button "Masuk" [ref=e14] [cursor=pointer]

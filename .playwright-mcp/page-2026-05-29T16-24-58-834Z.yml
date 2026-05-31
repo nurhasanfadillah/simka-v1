@@ -1,0 +1,57 @@
+- generic [ref=e15]:
+  - complementary [ref=e16]:
+    - generic [ref=e17]:
+      - img "Logo" [ref=e18]
+      - generic [ref=e19]: SIMKA
+      - generic [ref=e20]: Sistem Manajemen Keuangan
+    - navigation [ref=e21]:
+      - link "Dashboard" [ref=e22] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e23]
+        - generic [ref=e28]: Dashboard
+      - paragraph [ref=e29]: Master Data
+      - link "Tahun Pelajaran" [ref=e30] [cursor=pointer]:
+        - /url: /master/tahun-pelajaran
+        - img [ref=e31]
+        - generic [ref=e33]: Tahun Pelajaran
+      - link "Manajemen Kelas" [ref=e34] [cursor=pointer]:
+        - /url: /master/kelas
+        - img [ref=e35]
+        - generic [ref=e40]: Manajemen Kelas
+      - link "POS Keuangan" [ref=e41] [cursor=pointer]:
+        - /url: /master/pos
+        - img [ref=e42]
+        - generic [ref=e44]: POS Keuangan
+      - link "Data Siswa" [ref=e45] [cursor=pointer]:
+        - /url: /master/siswa
+        - img [ref=e46]
+        - generic [ref=e49]: Data Siswa
+      - link "Transaksi" [ref=e51] [cursor=pointer]:
+        - /url: /keuangan/transaksi/baru
+        - img [ref=e52]
+        - generic [ref=e55]: Transaksi
+      - link "Tagihan" [ref=e56] [cursor=pointer]:
+        - /url: /keuangan/tagihan
+        - img [ref=e57]
+        - generic [ref=e60]: Tagihan
+      - link "Laporan" [ref=e61] [cursor=pointer]:
+        - /url: /laporan/harian
+        - img [ref=e62]
+        - generic [ref=e64]: Laporan
+      - link "Pengaturan" [ref=e65] [cursor=pointer]:
+        - /url: /pengaturan/users
+        - img [ref=e66]
+        - generic [ref=e69]: Pengaturan
+    - generic [ref=e70]:
+      - generic [ref=e71]:
+        - generic [ref=e73]: SA
+        - generic [ref=e74]:
+          - paragraph [ref=e75]: Super Admin
+          - paragraph [ref=e76]: Super Admin
+      - button "Logout" [ref=e77] [cursor=pointer]:
+        - img [ref=e78]
+        - generic [ref=e81]: Logout
+  - main [ref=e82]:
+    - generic [ref=e83]:
+      - heading "Dashboard" [level=1] [ref=e84]
+      - paragraph [ref=e85]: Memuat data...
