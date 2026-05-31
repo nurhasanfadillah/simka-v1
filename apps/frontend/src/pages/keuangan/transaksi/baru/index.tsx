@@ -397,7 +397,7 @@ export default function TransaksiBaruPage() {
                 <Button variant="ghost" size="sm" onClick={resetAll} className="text-gray-500">Ganti Siswa</Button>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="bg-white border border-gray-200 rounded-xl p-4">
                   <p className="text-xs text-gray-500">Total Tagihan</p>
                   <p className="tabular-nums text-lg font-bold text-gray-800">
@@ -408,12 +408,6 @@ export default function TransaksiBaruPage() {
                   <p className="text-xs text-gray-500">Total Pembayaran</p>
                   <p className="tabular-nums text-lg font-bold text-blue-600">
                     {formatRupiah(txnData.bebas.reduce((s, b) => s + b.paidAmount, 0) + txnData.bulanan.reduce((s, b) => s + b.paidAmount, 0))}
-                  </p>
-                </div>
-                <div className="bg-white border border-gray-200 rounded-xl p-4">
-                  <p className="text-xs text-gray-500">Total Sisa</p>
-                  <p className="tabular-nums text-lg font-bold text-red-600">
-                    {formatRupiah(txnData.bebas.reduce((s, b) => s + b.remaining, 0) + txnData.bulanan.reduce((s, b) => s + b.remaining, 0))}
                   </p>
                 </div>
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
