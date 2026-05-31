@@ -207,6 +207,17 @@ export default function TransaksiBaruPage() {
     }
   }
 
+  const handleCetakTagihan = async () => {
+    if (!selectedStudent) return
+    try {
+      const res = await apiClient.get(`/billing/bills/student-print/${selectedStudent.id}`, { responseType: 'blob' as const })
+      const url = URL.createObjectURL(new Blob([res.data as unknown as BlobPart], { type: 'application/pdf' }))
+      window.open(url, '_blank')
+    } catch {
+      setError('Gagal mencetak tagihan.')
+    }
+  }
+
   const handleDeleteTransaction = async (id: number) => {
     try {
       setDeletingTx(true)
@@ -411,7 +422,12 @@ export default function TransaksiBaruPage() {
                   <p className="text-3xl font-extrabold text-primary uppercase tracking-tight">{txnData.student.name}</p>
                   <p className="text-sm text-gray-500 mt-1">NIS: {txnData.student.nis} — {txnData.student.activeClassName ?? '-'} / {txnData.student.activeUnitName ?? '-'}</p>
                 </div>
-                <Button variant="ghost" size="sm" onClick={resetAll} className="text-gray-500">Ganti Siswa</Button>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={handleCetakTagihan} className="text-blue-600 border-blue-200 hover:bg-blue-50">
+                    <Printer className="size-3.5 mr-1" />Cetak Tagihan
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={resetAll} className="text-gray-500">Ganti Siswa</Button>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

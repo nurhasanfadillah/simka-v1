@@ -1,10 +1,16 @@
-import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { BillsService } from './bills.service';
 import { RequirePermissions } from '../../auth/decorators/require-permissions.decorator';
+import { PdfService } from '../../transactions/pdf/pdf.service';
+import { buildBillPrintHtml } from './bill-print.template';
 
 @Controller('billing/bills')
 export class BillsController {
-  constructor(private readonly service: BillsService) {}
+  constructor(
+    private readonly service: BillsService,
+    private readonly pdfService: PdfService,
+  ) {}
 
   @Get()
   @RequirePermissions('bill.view')
@@ -48,6 +54,23 @@ export class BillsController {
   @RequirePermissions('transaction.create')
   getStudentTransaction(@Param('studentId', ParseIntPipe) studentId: number) {
     return this.service.getStudentTransactionData(studentId);
+  }
+
+  @Get('student-print/:studentId')
+  @RequirePermissions('bill.view')
+  async printStudentBills(
+    @Param('studentId', ParseIntPipe) studentId: number,
+    @Res() res: Response,
+  ) {
+    const data = await this.service.getStudentTransactionData(studentId);
+    const html = buildBillPrintHtml(data as any);
+    const pdf = await this.pdfService.generateFromHtml(html, { format: 'A4', landscape: true });
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `inline; filename="tagihan-${data.student.nis}.pdf"`,
+      'Content-Length': pdf.length,
+    });
+    res.end(pdf);
   }
 
   @Get(':id')
