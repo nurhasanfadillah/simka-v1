@@ -302,8 +302,15 @@ export default function TransaksiBaruPage() {
     finally { setSaving(false) }
   }
 
-  const handleCetakKwitansi = () => {
-    if (result) window.open(`/api/transactions/${result.id}/receipt`, '_blank')
+  const handleCetakKwitansi = async () => {
+    if (!result) return
+    try {
+      const res = await apiClient.get(`/transactions/${result.id}/receipt`, { responseType: 'blob' as const })
+      const url = URL.createObjectURL(new Blob([res.data as unknown as BlobPart], { type: 'application/pdf' }))
+      window.open(url, '_blank')
+    } catch {
+      setError('Gagal mencetak kwitansi.')
+    }
   }
 
   return (<div className="p-6 animate-fade-in-up max-w-full">
