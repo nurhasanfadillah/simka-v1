@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { and, desc, eq, gte, like, lte, SQL } from 'drizzle-orm';
+import { and, desc, eq, gte, like, lte, SQL, sum } from 'drizzle-orm';
 import { DRIZZLE } from '../db/db.module';
 import type { DB } from '../db/db';
 import {
@@ -77,9 +77,31 @@ export class TransactionsService {
 
       if (billMonthIds.length > 0) {
         for (const bmId of billMonthIds) {
+          const [monthData] = await tx
+            .select({ amount: billMonths.amount })
+            .from(billMonths)
+            .where(eq(billMonths.id, bmId));
+
+          if (!monthData) continue;
+
+          const [paid] = await tx
+            .select({ total: sum(transactionItems.amount).mapWith(Number) })
+            .from(transactionItems)
+            .innerJoin(transactions, eq(transactionItems.transactionId, transactions.id))
+            .where(
+              and(
+                eq(transactionItems.billMonthId, bmId),
+                eq(transactions.status, 'aktif'),
+              ),
+            )
+            .groupBy(transactionItems.billMonthId);
+
+          const totalPaid = paid?.total ?? 0;
+          const newStatus = totalPaid >= monthData.amount ? 'lunas' as const : 'belum_bayar' as const;
+
           await tx
             .update(billMonths)
-            .set({ status: 'lunas', paidAt: new Date() })
+            .set({ status: newStatus, paidAt: newStatus === 'lunas' ? new Date() : null })
             .where(eq(billMonths.id, bmId));
         }
       }
@@ -212,9 +234,31 @@ export class TransactionsService {
         .filter((bmId): bmId is number => bmId != null);
 
       for (const bmId of billMonthIds) {
+        const [monthData] = await tx
+          .select({ amount: billMonths.amount })
+          .from(billMonths)
+          .where(eq(billMonths.id, bmId));
+
+        if (!monthData) continue;
+
+        const [paid] = await tx
+          .select({ total: sum(transactionItems.amount).mapWith(Number) })
+          .from(transactionItems)
+          .innerJoin(transactions, eq(transactionItems.transactionId, transactions.id))
+          .where(
+            and(
+              eq(transactionItems.billMonthId, bmId),
+              eq(transactions.status, 'aktif'),
+            ),
+          )
+          .groupBy(transactionItems.billMonthId);
+
+        const totalPaid = paid?.total ?? 0;
+        const newStatus = totalPaid >= monthData.amount ? 'lunas' as const : 'belum_bayar' as const;
+
         await tx
           .update(billMonths)
-          .set({ status: 'belum_bayar', paidAt: null })
+          .set({ status: newStatus, paidAt: newStatus === 'lunas' ? new Date() : null })
           .where(eq(billMonths.id, bmId));
       }
 
