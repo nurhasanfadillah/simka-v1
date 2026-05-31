@@ -228,6 +228,21 @@ export default function TransaksiBaruPage() {
     setShowSearchDialog(true)
   }
 
+  const handleBackToPayment = async () => {
+    if (!selectedStudent) return
+    setStep('search')
+    setResult(null)
+    setCartItems([])
+    setNotes('')
+    setTab('bayar')
+    try {
+      setLoadingTxn(true)
+      const res = await apiClient.get<StudentTransactionData>(`/billing/bills/student-transaction/${selectedStudent.id}`)
+      setTxnData(res.data)
+    } catch { setError('Gagal memuat ulang data.') }
+    finally { setLoadingTxn(false) }
+  }
+
   const addToCart = (billId: number, paymentPostName: string, amount: number, billMonthId?: number, monthLabel?: string) => {
     setCartItems(prev => {
       const exists = prev.find(i => billMonthId ? i.billMonthId === billMonthId : (i.billId === billId && !i.billMonthId))
@@ -373,22 +388,37 @@ export default function TransaksiBaruPage() {
             </div>
           ) : txnData ? (
             <>
-              {/* Student Identity + Tunggakan */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-gray-900">{txnData.student.name}</p>
-                    <p className="text-sm text-gray-500">NIS: {txnData.student.nis}</p>
-                    <p className="text-xs text-gray-400">{txnData.student.activeClassName ?? '-'} — {txnData.student.activeUnitName ?? '-'}</p>
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={resetAll} className="text-gray-500">Ganti Siswa</Button>
+              {/* Student Identity + Summary Cards */}
+              <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center justify-between">
+                <div>
+                  <p className="text-3xl font-extrabold text-primary uppercase tracking-tight">{txnData.student.name}</p>
+                  <p className="text-sm text-gray-500 mt-1">NIS: {txnData.student.nis} — {txnData.student.activeClassName ?? '-'} / {txnData.student.activeUnitName ?? '-'}</p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={resetAll} className="text-gray-500">Ganti Siswa</Button>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-white border border-gray-200 rounded-xl p-4">
+                  <p className="text-xs text-gray-500">Total Tagihan</p>
+                  <p className="tabular-nums text-lg font-bold text-gray-800">
+                    {formatRupiah(txnData.bebas.reduce((s, b) => s + b.totalAmount, 0) + txnData.bulanan.reduce((s, b) => s + b.totalAmount, 0))}
+                  </p>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-xl p-4">
+                  <p className="text-xs text-gray-500">Total Pembayaran</p>
+                  <p className="tabular-nums text-lg font-bold text-blue-600">
+                    {formatRupiah(txnData.bebas.reduce((s, b) => s + b.paidAmount, 0) + txnData.bulanan.reduce((s, b) => s + b.paidAmount, 0))}
+                  </p>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-xl p-4">
+                  <p className="text-xs text-gray-500">Total Sisa</p>
+                  <p className="tabular-nums text-lg font-bold text-red-600">
+                    {formatRupiah(txnData.bebas.reduce((s, b) => s + b.remaining, 0) + txnData.bulanan.reduce((s, b) => s + b.remaining, 0))}
+                  </p>
                 </div>
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                  <p className="text-sm text-amber-700">Total Tunggakan</p>
-                  <p className="tabular-nums text-2xl font-bold text-amber-800">{formatRupiah(txnData.totalTunggakan)}</p>
-                  <p className="text-xs text-amber-600">
-                    {txnData.bebas.filter(b => b.status !== 'lunas').length + txnData.bulanan.filter(b => b.status !== 'lunas').length} tagihan belum lunas
-                  </p>
+                  <p className="text-xs text-amber-700">Total Tunggakan</p>
+                  <p className="tabular-nums text-lg font-bold text-amber-800">{formatRupiah(txnData.totalTunggakan)}</p>
                 </div>
               </div>
 
@@ -680,7 +710,7 @@ export default function TransaksiBaruPage() {
           </div>
           <div className="flex justify-center gap-3 mt-6">
             <Button className="bg-accent hover:bg-accent/90" onClick={handleCetakKwitansi}>Cetak Kwitansi</Button>
-            <Button variant="outline" onClick={resetAll}>Transaksi Baru</Button>
+            <Button variant="outline" onClick={handleBackToPayment}>Transaksi Baru</Button>
           </div>
         </div>
       )}
