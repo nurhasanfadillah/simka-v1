@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Search, CheckCircle, X, Ban, Trash2 } from 'lucide-react'
+import { Search, CheckCircle, X, Ban, Trash2, Printer } from 'lucide-react'
 import axios from 'axios'
 import { apiClient } from '@/lib/api'
 import type {
@@ -194,6 +194,16 @@ export default function TransaksiBaruPage() {
       setError('Gagal void transaksi.')
     } finally {
       setVoiding(false)
+    }
+  }
+
+  const handleCetakRiwayat = async (txId: number) => {
+    try {
+      const res = await apiClient.get(`/transactions/${txId}/receipt`, { responseType: 'blob' as const })
+      const url = URL.createObjectURL(new Blob([res.data as unknown as BlobPart], { type: 'application/pdf' }))
+      window.open(url, '_blank')
+    } catch {
+      setError('Gagal mencetak kwitansi.')
     }
   }
 
@@ -668,6 +678,9 @@ export default function TransaksiBaruPage() {
                               <td className="px-4 py-3 text-gray-500">{new Date(tx.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
                               <td className="px-4 py-3 text-center">
                                 <div className="flex items-center justify-center gap-1">
+                                  <Button size="icon" variant="ghost" className="text-gray-500 hover:text-accent" aria-label="Cetak kwitansi" onClick={() => handleCetakRiwayat(tx.id)}>
+                                    <Printer className="size-4" />
+                                  </Button>
                                   {tx.status === 'aktif' && (
                                     <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50" onClick={() => { setVoidTx(tx); setVoidReason('') }} disabled={voiding}>
                                       <Ban className="size-3.5 mr-1" />Void

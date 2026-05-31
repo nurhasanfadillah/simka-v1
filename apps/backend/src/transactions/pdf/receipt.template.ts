@@ -97,9 +97,10 @@ export function buildReceiptHtml(data: ReceiptData): string {
     .top-bar { background: #1A3829; height: 8px; }
     .header { display: flex; align-items: center; justify-content: space-between; padding: 16px 28px 10px; }
     .header-left { display: flex; align-items: center; gap: 14px; }
-    .header-logo { width: 52px; height: 52px; border: 2px solid #1A3829; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; color: #1A3829; }
-    .header-brand h1 { margin: 0; font-size: 16px; color: #1A3829; font-weight: 800; letter-spacing: 0.5px; }
-    .header-brand p { margin: 2px 0 0; font-size: 10px; color: #666; }
+    .header-logo { display: none; }
+    .header-brand { text-align: center; width: 100%; }
+    .header-brand h1 { margin: 0; font-size: 20px; color: #1A3829; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+    .header-brand p { margin: 4px 0 0; font-size: 10px; color: #555; line-height: 1.5; }
     .header-title { text-align: right; }
     .header-title .kwitansi { font-size: 18px; font-weight: 900; color: #1A3829; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
     .header-title .no { font-size: 11px; color: #555; margin: 2px 0 0; font-family: 'Courier New', monospace; }
@@ -136,10 +137,9 @@ export function buildReceiptHtml(data: ReceiptData): string {
     <div class="top-bar"></div>
     <div class="header">
       <div class="header-left">
-        <div class="header-logo">AH</div>
         <div class="header-brand">
-          <h1>Yayasan Al-Hasaniyyah</h1>
-          <p>Sistem Informasi Keuangan Sekolah</p>
+          <h1>YAYASAN PENDIDIKAN ISLAM AL-HASANIYYAH</h1>
+          <p>Alamat: Jl. Raya Cileungsi-Jonggol, Km. 10 Desa Cipeuncag Kec. Cileungsi Kab. Bogor, Jawa Barat 16820</p>
         </div>
       </div>
       <div class="header-title">
