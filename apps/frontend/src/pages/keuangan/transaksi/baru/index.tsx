@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Search, CheckCircle, X } from 'lucide-react'
+import { Search, CheckCircle, X, Ban, Trash2 } from 'lucide-react'
+import axios from 'axios'
 import { apiClient } from '@/lib/api'
 import type {
   CreateTransactionResult,
@@ -30,6 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { AlertDialog } from '@/components/ui/alert-dialog'
+import { DeleteErrorModal } from '@/components/ui/delete-error-modal'
 
 const formatRupiah = (v: number) =>
   new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(v)
@@ -71,6 +73,11 @@ export default function TransaksiBaruPage() {
   const [tab, setTab] = useState<'bayar' | 'riwayat'>('bayar')
   const [riwayat, setRiwayat] = useState<Transaction[]>([])
   const [loadingRiwayat, setLoadingRiwayat] = useState(false)
+  const [voidTx, setVoidTx] = useState<Transaction | null>(null)
+  const [voidReason, setVoidReason] = useState('')
+  const [voiding, setVoiding] = useState(false)
+  const [deletingTx, setDeletingTx] = useState(false)
+  const [deleteErrorData, setDeleteErrorData] = useState<Record<string, number> | null>(null)
 
   const [schoolYears, setSchoolYears] = useState<SchoolYear[]>([])
   const [units, setUnits] = useState<SchoolUnit[]>([])
@@ -174,6 +181,37 @@ export default function TransaksiBaruPage() {
   useEffect(() => {
     if (tab === 'riwayat') fetchRiwayat()
   }, [tab])
+
+  const handleVoid = async () => {
+    if (!voidTx || voidReason.length < 3) return
+    try {
+      setVoiding(true)
+      await apiClient.post(`/transactions/${voidTx.id}/void`, { voidReason })
+      setVoidTx(null)
+      setVoidReason('')
+      await fetchRiwayat()
+    } catch {
+      setError('Gagal void transaksi.')
+    } finally {
+      setVoiding(false)
+    }
+  }
+
+  const handleDeleteTransaction = async (id: number) => {
+    try {
+      setDeletingTx(true)
+      await apiClient.delete(`/transactions/${id}`)
+      await fetchRiwayat()
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        setDeleteErrorData(err.response.data.relatedData ?? { status: 1 })
+      } else {
+        setError('Gagal menghapus transaksi.')
+      }
+    } finally {
+      setDeletingTx(false)
+    }
+  }
 
   const resetAll = () => {
     setStep('search')
@@ -581,6 +619,7 @@ export default function TransaksiBaruPage() {
                             <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Nominal</th>
                             <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                            <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -596,6 +635,20 @@ export default function TransaksiBaruPage() {
                                 </span>
                               </td>
                               <td className="px-4 py-3 text-gray-500">{new Date(tx.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                              <td className="px-4 py-3 text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  {tx.status === 'aktif' && (
+                                    <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50" onClick={() => { setVoidTx(tx); setVoidReason('') }} disabled={voiding}>
+                                      <Ban className="size-3.5 mr-1" />Void
+                                    </Button>
+                                  )}
+                                  {tx.status === 'void' && (
+                                    <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50" onClick={() => handleDeleteTransaction(tx.id)} disabled={deletingTx}>
+                                      <Trash2 className="size-3.5 mr-1" />Hapus
+                                    </Button>
+                                  )}
+                                </div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -641,6 +694,31 @@ export default function TransaksiBaruPage() {
         onAction={handleSubmit}
         loading={saving}
       />
+
+      <AlertDialog
+        open={!!voidTx}
+        onOpenChange={(open) => { if (!open) setVoidTx(null) }}
+        title="Void Transaksi?"
+        description={`Anda akan membatalkan transaksi ${voidTx?.transactionNumber}. Status menjadi "void" dan tagihan dikembalikan. Tindakan ini permanen.`}
+        actionLabel="Void"
+        onAction={handleVoid}
+        loading={voiding}
+        disabled={voidReason.length < 3}
+      >
+        <div className="space-y-2">
+          <Label>Alasan Void *</Label>
+          <Input
+            placeholder="Minimal 3 karakter"
+            value={voidReason}
+            onChange={e => setVoidReason(e.target.value)}
+          />
+          {voidReason.length > 0 && voidReason.length < 3 && (
+            <p className="text-sm text-red-500">Minimal 3 karakter</p>
+          )}
+        </div>
+      </AlertDialog>
+
+      <DeleteErrorModal open={deleteErrorData !== null} onClose={() => setDeleteErrorData(null)} relatedData={deleteErrorData ?? {}} />
       </div>
     </div>
   )
